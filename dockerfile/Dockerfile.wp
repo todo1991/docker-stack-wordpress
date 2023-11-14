@@ -1,0 +1,33 @@
+FROM wordpress:php8.2-fpm-alpine
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions redis
+
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
+	&& sed -i  's/memory_limit\s*=.*/memory_limit=1024M/g' /usr/local/etc/php/php.ini \
+	&& sed -i  's/upload_max_filesize\s*=.*/upload_max_filesize=128M/g' /usr/local/etc/php/php.ini \
+	&& sed -i  's/post_max_size\s*=.*/post_max_size=256M/g' /usr/local/etc/php/php.ini \
+	&& sed -i  's/max_execution_time\s*=.*/max_execution_time=300/g' /usr/local/etc/php/php.ini \
+	&& sed -i  's/max_input_time\s*=.*/max_input_time=300/g' /usr/local/etc/php/php.ini
+
+RUN <<EOF
+cat /dev/null > /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.revalidate_freq=60" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.validate_timestamps=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.max_accelerated_files=6000" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.interned_strings_buffer=16" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.use_cwd=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+EOF
+
+ARG DOMAIN
+RUN  <<EOF
+sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/www.conf
+sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/docker.conf
+sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/zz-docker.conf
+EOF
+
