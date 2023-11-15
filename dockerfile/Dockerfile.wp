@@ -23,11 +23,3 @@ echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache-recommended.
 echo "opcache.use_cwd=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 EOF
-
-ARG DOMAIN
-RUN  <<EOF
-sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/www.conf
-sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/docker.conf
-sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/zz-docker.conf
-EOF
-
