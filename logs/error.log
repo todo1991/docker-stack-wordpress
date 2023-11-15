@@ -3708,3 +3708,392 @@
 2023/11/14 21:11:16 [notice] 1#1: signal 17 (SIGCHLD) received from 49
 2023/11/14 21:11:16 [notice] 1#1: cache loader process 49 exited with code 0
 2023/11/14 21:11:16 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:31:18 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:31:18 [notice] 48#48: exiting
+2023/11/14 21:31:18 [notice] 47#47: gracefully shutting down
+2023/11/14 21:31:18 [notice] 47#47: exiting
+2023/11/14 21:31:18 [notice] 46#46: gracefully shutting down
+2023/11/14 21:31:18 [notice] 46#46: exiting
+2023/11/14 21:31:18 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:31:18 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/14 21:31:18 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:31:18 [notice] 47#47: exit
+2023/11/14 21:31:19 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:31:19 [notice] 1#1: worker process 47 exited with code 0
+2023/11/14 21:31:19 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:31:18 [notice] 46#46: exit
+2023/11/14 21:31:19 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:31:19 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:31:19 [notice] 1#1: exit
+2023/11/14 21:34:48 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 21:34:48 [notice] 1#1: using the "epoll" event method
+2023/11/14 21:34:48 [notice] 1#1: nginx/1.25.3
+2023/11/14 21:34:48 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 21:34:48 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 21:34:48 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 21:34:48 [notice] 1#1: start worker processes
+2023/11/14 21:34:48 [notice] 1#1: start worker process 46
+2023/11/14 21:34:48 [notice] 1#1: start worker process 47
+2023/11/14 21:34:48 [notice] 1#1: start cache manager process 48
+2023/11/14 21:34:48 [notice] 1#1: start cache loader process 49
+2023/11/14 21:35:43 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:35:43 [notice] 49#49: exiting
+2023/11/14 21:35:43 [notice] 47#47: gracefully shutting down
+2023/11/14 21:35:43 [notice] 47#47: exiting
+2023/11/14 21:35:43 [notice] 48#48: exiting
+2023/11/14 21:35:43 [notice] 46#46: gracefully shutting down
+2023/11/14 21:35:43 [notice] 46#46: exiting
+2023/11/14 21:35:43 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:35:43 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/14 21:35:43 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:35:43 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/14 21:35:43 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/14 21:35:43 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:35:43 [notice] 46#46: exit
+2023/11/14 21:35:43 [notice] 47#47: exit
+2023/11/14 21:35:44 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:35:44 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:35:44 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:35:44 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:35:44 [notice] 1#1: worker process 47 exited with code 0
+2023/11/14 21:35:44 [notice] 1#1: exit
+2023/11/14 21:37:14 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 21:37:14 [notice] 1#1: using the "epoll" event method
+2023/11/14 21:37:14 [notice] 1#1: nginx/1.25.3
+2023/11/14 21:37:14 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 21:37:14 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 21:37:14 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 21:37:14 [notice] 1#1: start worker processes
+2023/11/14 21:37:14 [notice] 1#1: start worker process 45
+2023/11/14 21:37:14 [notice] 1#1: start worker process 46
+2023/11/14 21:37:14 [notice] 1#1: start cache manager process 47
+2023/11/14 21:37:14 [notice] 1#1: start cache loader process 48
+2023/11/14 21:38:14 [notice] 48#48: http file cache: /var/run/nginx-cache 0.000M, bsize: 4096
+2023/11/14 21:38:14 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:38:14 [notice] 1#1: cache loader process 48 exited with code 0
+2023/11/14 21:38:14 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:39:07 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:39:07 [notice] 45#45: gracefully shutting down
+2023/11/14 21:39:07 [notice] 46#46: gracefully shutting down
+2023/11/14 21:39:07 [notice] 45#45: exiting
+2023/11/14 21:39:07 [notice] 46#46: exiting
+2023/11/14 21:39:07 [notice] 47#47: exiting
+2023/11/14 21:39:07 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:39:07 [notice] 1#1: cache manager process 47 exited with code 0
+2023/11/14 21:39:07 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:39:07 [notice] 45#45: exit
+2023/11/14 21:39:07 [notice] 1#1: signal 17 (SIGCHLD) received from 45
+2023/11/14 21:39:07 [notice] 1#1: worker process 45 exited with code 0
+2023/11/14 21:39:07 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:39:07 [notice] 46#46: exit
+2023/11/14 21:39:07 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:39:07 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:39:07 [notice] 1#1: exit
+2023/11/14 21:43:17 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 21:43:17 [notice] 1#1: using the "epoll" event method
+2023/11/14 21:43:17 [notice] 1#1: nginx/1.25.3
+2023/11/14 21:43:17 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 21:43:17 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 21:43:17 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 21:43:17 [notice] 1#1: start worker processes
+2023/11/14 21:43:17 [notice] 1#1: start worker process 46
+2023/11/14 21:43:17 [notice] 1#1: start worker process 47
+2023/11/14 21:43:17 [notice] 1#1: start cache manager process 48
+2023/11/14 21:43:17 [notice] 1#1: start cache loader process 49
+2023/11/14 21:43:29 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:43:29 [notice] 47#47: gracefully shutting down
+2023/11/14 21:43:29 [notice] 48#48: exiting
+2023/11/14 21:43:29 [notice] 46#46: gracefully shutting down
+2023/11/14 21:43:29 [notice] 46#46: exiting
+2023/11/14 21:43:29 [notice] 47#47: exiting
+2023/11/14 21:43:29 [notice] 49#49: exiting
+2023/11/14 21:43:29 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:43:29 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/14 21:43:29 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:43:29 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/14 21:43:29 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/14 21:43:29 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:43:29 [notice] 47#47: exit
+2023/11/14 21:43:29 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:43:29 [notice] 1#1: worker process 47 exited with code 0
+2023/11/14 21:43:29 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:43:29 [notice] 46#46: exit
+2023/11/14 21:43:29 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:43:29 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:43:29 [notice] 1#1: exit
+2023/11/14 21:45:37 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 21:45:37 [notice] 1#1: using the "epoll" event method
+2023/11/14 21:45:37 [notice] 1#1: nginx/1.25.3
+2023/11/14 21:45:37 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 21:45:37 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 21:45:37 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 21:45:37 [notice] 1#1: start worker processes
+2023/11/14 21:45:37 [notice] 1#1: start worker process 45
+2023/11/14 21:45:37 [notice] 1#1: start worker process 46
+2023/11/14 21:45:37 [notice] 1#1: start cache manager process 47
+2023/11/14 21:45:37 [notice] 1#1: start cache loader process 48
+2023/11/14 21:46:37 [notice] 48#48: http file cache: /var/run/nginx-cache 0.000M, bsize: 4096
+2023/11/14 21:46:37 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:46:37 [notice] 1#1: cache loader process 48 exited with code 0
+2023/11/14 21:46:37 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:50:00 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:50:00 [notice] 46#46: gracefully shutting down
+2023/11/14 21:50:00 [notice] 45#45: gracefully shutting down
+2023/11/14 21:50:00 [notice] 45#45: exiting
+2023/11/14 21:50:00 [notice] 46#46: exiting
+2023/11/14 21:50:00 [notice] 47#47: exiting
+2023/11/14 21:50:00 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:50:00 [notice] 1#1: cache manager process 47 exited with code 0
+2023/11/14 21:50:00 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:50:00 [notice] 46#46: exit
+2023/11/14 21:50:01 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:50:01 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:50:01 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:50:00 [notice] 45#45: exit
+2023/11/14 21:50:01 [notice] 1#1: signal 17 (SIGCHLD) received from 45
+2023/11/14 21:50:01 [notice] 1#1: worker process 45 exited with code 0
+2023/11/14 21:50:01 [notice] 1#1: exit
+2023/11/14 21:50:03 [emerg] 1#1: host not found in upstream "wordpress_instance:9000" in /etc/nginx/conf.d/blog.thanhtruc.dev.conf:20
+2023/11/14 21:50:03 [emerg] 1#1: host not found in upstream "wordpress_instance:9000" in /etc/nginx/conf.d/blog.thanhtruc.dev.conf:20
+2023/11/14 21:50:04 [emerg] 1#1: host not found in upstream "wordpress_instance:9000" in /etc/nginx/conf.d/blog.thanhtruc.dev.conf:20
+2023/11/14 21:50:05 [emerg] 1#1: host not found in upstream "wordpress_instance:9000" in /etc/nginx/conf.d/blog.thanhtruc.dev.conf:20
+2023/11/14 21:50:10 [emerg] 1#1: host not found in upstream "wordpress_instance:9000" in /etc/nginx/conf.d/blog.thanhtruc.dev.conf:20
+2023/11/14 21:53:39 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 21:53:39 [notice] 1#1: using the "epoll" event method
+2023/11/14 21:53:39 [notice] 1#1: nginx/1.25.3
+2023/11/14 21:53:39 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 21:53:39 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 21:53:39 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 21:53:39 [notice] 1#1: start worker processes
+2023/11/14 21:53:39 [notice] 1#1: start worker process 46
+2023/11/14 21:53:39 [notice] 1#1: start worker process 47
+2023/11/14 21:53:39 [notice] 1#1: start cache manager process 48
+2023/11/14 21:53:39 [notice] 1#1: start cache loader process 49
+2023/11/14 21:54:40 [notice] 49#49: http file cache: /var/run/nginx-cache 0.000M, bsize: 4096
+2023/11/14 21:54:40 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/14 21:54:40 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/14 21:54:40 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:55:42 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:55:42 [notice] 46#46: gracefully shutting down
+2023/11/14 21:55:42 [notice] 46#46: exiting
+2023/11/14 21:55:42 [notice] 48#48: exiting
+2023/11/14 21:55:42 [notice] 47#47: gracefully shutting down
+2023/11/14 21:55:42 [notice] 47#47: exiting
+2023/11/14 21:55:42 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:55:42 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/14 21:55:42 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:55:42 [notice] 46#46: exit
+2023/11/14 21:55:42 [notice] 47#47: exit
+2023/11/14 21:55:43 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:55:43 [notice] 1#1: worker process 47 exited with code 0
+2023/11/14 21:55:43 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:55:43 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:55:43 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:55:43 [notice] 1#1: exit
+2023/11/14 21:56:27 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 21:56:27 [notice] 1#1: using the "epoll" event method
+2023/11/14 21:56:27 [notice] 1#1: nginx/1.25.3
+2023/11/14 21:56:27 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 21:56:27 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 21:56:27 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 21:56:27 [notice] 1#1: start worker processes
+2023/11/14 21:56:27 [notice] 1#1: start worker process 45
+2023/11/14 21:56:27 [notice] 1#1: start worker process 46
+2023/11/14 21:56:27 [notice] 1#1: start cache manager process 47
+2023/11/14 21:56:27 [notice] 1#1: start cache loader process 48
+2023/11/14 21:56:45 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:56:45 [notice] 47#47: exiting
+2023/11/14 21:56:45 [notice] 46#46: gracefully shutting down
+2023/11/14 21:56:45 [notice] 46#46: exiting
+2023/11/14 21:56:45 [notice] 48#48: exiting
+2023/11/14 21:56:45 [notice] 45#45: gracefully shutting down
+2023/11/14 21:56:45 [notice] 45#45: exiting
+2023/11/14 21:56:45 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:56:45 [notice] 1#1: cache manager process 47 exited with code 0
+2023/11/14 21:56:45 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:56:45 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:56:45 [notice] 1#1: cache loader process 48 exited with code 0
+2023/11/14 21:56:45 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:56:45 [notice] 46#46: exit
+2023/11/14 21:56:45 [notice] 45#45: exit
+2023/11/14 21:56:45 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:56:45 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:56:45 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:56:45 [notice] 1#1: signal 17 (SIGCHLD) received from 45
+2023/11/14 21:56:45 [notice] 1#1: worker process 45 exited with code 0
+2023/11/14 21:56:45 [notice] 1#1: exit
+2023/11/14 21:57:15 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 21:57:15 [notice] 1#1: using the "epoll" event method
+2023/11/14 21:57:15 [notice] 1#1: nginx/1.25.3
+2023/11/14 21:57:15 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 21:57:15 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 21:57:15 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 21:57:15 [notice] 1#1: start worker processes
+2023/11/14 21:57:15 [notice] 1#1: start worker process 46
+2023/11/14 21:57:15 [notice] 1#1: start worker process 47
+2023/11/14 21:57:15 [notice] 1#1: start cache manager process 48
+2023/11/14 21:57:15 [notice] 1#1: start cache loader process 49
+2023/11/14 21:58:15 [notice] 49#49: http file cache: /var/run/nginx-cache 0.082M, bsize: 4096
+2023/11/14 21:58:15 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/14 21:58:15 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/14 21:58:15 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:58:56 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 21:58:56 [notice] 47#47: gracefully shutting down
+2023/11/14 21:58:56 [notice] 48#48: exiting
+2023/11/14 21:58:56 [notice] 47#47: exiting
+2023/11/14 21:58:56 [notice] 46#46: gracefully shutting down
+2023/11/14 21:58:56 [notice] 46#46: exiting
+2023/11/14 21:58:56 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 21:58:56 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/14 21:58:56 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:58:56 [notice] 46#46: exit
+2023/11/14 21:58:56 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 21:58:56 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 21:58:56 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 21:58:56 [notice] 47#47: exit
+2023/11/14 21:58:56 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 21:58:56 [notice] 1#1: worker process 47 exited with code 0
+2023/11/14 21:58:56 [notice] 1#1: exit
+2023/11/14 22:00:52 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 22:00:52 [notice] 1#1: using the "epoll" event method
+2023/11/14 22:00:52 [notice] 1#1: nginx/1.25.3
+2023/11/14 22:00:52 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 22:00:52 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 22:00:52 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 22:00:52 [notice] 1#1: start worker processes
+2023/11/14 22:00:52 [notice] 1#1: start worker process 46
+2023/11/14 22:00:52 [notice] 1#1: start worker process 47
+2023/11/14 22:00:52 [notice] 1#1: start cache manager process 48
+2023/11/14 22:00:52 [notice] 1#1: start cache loader process 49
+2023/11/14 22:01:52 [notice] 49#49: http file cache: /var/run/nginx-cache 0.086M, bsize: 4096
+2023/11/14 22:01:52 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/14 22:01:52 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/14 22:01:52 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 22:05:27 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 22:05:27 [notice] 47#47: gracefully shutting down
+2023/11/14 22:05:27 [notice] 47#47: exiting
+2023/11/14 22:05:27 [notice] 48#48: exiting
+2023/11/14 22:05:27 [notice] 46#46: gracefully shutting down
+2023/11/14 22:05:27 [notice] 46#46: exiting
+2023/11/14 22:05:27 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 22:05:27 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/14 22:05:27 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 22:05:27 [notice] 46#46: exit
+2023/11/14 22:05:27 [notice] 47#47: exit
+2023/11/14 22:05:28 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 22:05:28 [notice] 1#1: worker process 47 exited with code 0
+2023/11/14 22:05:28 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 22:05:28 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 22:05:28 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 22:05:28 [notice] 1#1: exit
+2023/11/14 22:05:34 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 22:05:34 [notice] 1#1: using the "epoll" event method
+2023/11/14 22:05:34 [notice] 1#1: nginx/1.25.3
+2023/11/14 22:05:34 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 22:05:34 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 22:05:34 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 22:05:34 [notice] 1#1: start worker processes
+2023/11/14 22:05:34 [notice] 1#1: start worker process 46
+2023/11/14 22:05:34 [notice] 1#1: start worker process 47
+2023/11/14 22:05:34 [notice] 1#1: start cache manager process 48
+2023/11/14 22:05:34 [notice] 1#1: start cache loader process 49
+2023/11/14 22:06:35 [notice] 49#49: http file cache: /var/run/nginx-cache 0.082M, bsize: 4096
+2023/11/14 22:06:35 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/14 22:06:35 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/14 22:06:35 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 22:19:09 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/14 22:19:09 [notice] 47#47: gracefully shutting down
+2023/11/14 22:19:09 [notice] 47#47: exiting
+2023/11/14 22:19:09 [notice] 48#48: exiting
+2023/11/14 22:19:09 [notice] 46#46: gracefully shutting down
+2023/11/14 22:19:09 [notice] 46#46: exiting
+2023/11/14 22:19:09 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/14 22:19:09 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/14 22:19:09 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 22:19:09 [notice] 46#46: exit
+2023/11/14 22:19:09 [notice] 47#47: exit
+2023/11/14 22:19:09 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/14 22:19:09 [notice] 1#1: worker process 46 exited with code 0
+2023/11/14 22:19:09 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/14 22:19:09 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/14 22:19:09 [notice] 1#1: worker process 47 exited with code 0
+2023/11/14 22:19:09 [notice] 1#1: exit
+2023/11/14 22:19:15 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/14 22:19:15 [notice] 1#1: using the "epoll" event method
+2023/11/14 22:19:15 [notice] 1#1: nginx/1.25.3
+2023/11/14 22:19:15 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/14 22:19:15 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/14 22:19:15 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/14 22:19:15 [notice] 1#1: start worker processes
+2023/11/14 22:19:15 [notice] 1#1: start worker process 46
+2023/11/14 22:19:15 [notice] 1#1: start worker process 47
+2023/11/14 22:19:15 [notice] 1#1: start cache manager process 48
+2023/11/14 22:19:15 [notice] 1#1: start cache loader process 49
+2023/11/14 22:20:16 [notice] 49#49: http file cache: /var/run/nginx-cache 0.000M, bsize: 4096
+2023/11/14 22:20:16 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/14 22:20:16 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/14 22:20:16 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/15 15:56:22 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/15 15:56:22 [notice] 48#48: exiting
+2023/11/15 15:56:22 [notice] 47#47: gracefully shutting down
+2023/11/15 15:56:22 [notice] 47#47: exiting
+2023/11/15 15:56:22 [notice] 46#46: gracefully shutting down
+2023/11/15 15:56:22 [notice] 46#46: exiting
+2023/11/15 15:56:22 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/15 15:56:22 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/15 15:56:22 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/15 15:56:22 [notice] 47#47: exit
+2023/11/15 15:56:22 [notice] 46#46: exit
+2023/11/15 15:56:22 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/15 15:56:22 [notice] 1#1: worker process 46 exited with code 0
+2023/11/15 15:56:22 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/15 15:56:22 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/15 15:56:22 [notice] 1#1: worker process 47 exited with code 0
+2023/11/15 15:56:22 [notice] 1#1: exit
+2023/11/15 15:56:38 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/15 15:56:38 [notice] 1#1: using the "epoll" event method
+2023/11/15 15:56:38 [notice] 1#1: nginx/1.25.3
+2023/11/15 15:56:38 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/15 15:56:38 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/15 15:56:38 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/15 15:56:38 [notice] 1#1: start worker processes
+2023/11/15 15:56:38 [notice] 1#1: start worker process 46
+2023/11/15 15:56:38 [notice] 1#1: start worker process 47
+2023/11/15 15:56:38 [notice] 1#1: start cache manager process 48
+2023/11/15 15:56:38 [notice] 1#1: start cache loader process 49
+2023/11/15 15:57:39 [notice] 49#49: http file cache: /var/run/nginx-cache 0.000M, bsize: 4096
+2023/11/15 15:57:39 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/15 15:57:39 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/15 15:57:39 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/15 16:20:33 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/11/15 16:20:33 [notice] 46#46: gracefully shutting down
+2023/11/15 16:20:33 [notice] 46#46: exiting
+2023/11/15 16:20:33 [notice] 48#48: exiting
+2023/11/15 16:20:33 [notice] 47#47: gracefully shutting down
+2023/11/15 16:20:33 [notice] 47#47: exiting
+2023/11/15 16:20:33 [notice] 1#1: signal 17 (SIGCHLD) received from 48
+2023/11/15 16:20:33 [notice] 1#1: cache manager process 48 exited with code 0
+2023/11/15 16:20:33 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/15 16:20:33 [notice] 47#47: exit
+2023/11/15 16:20:33 [notice] 46#46: exit
+2023/11/15 16:20:34 [notice] 1#1: signal 17 (SIGCHLD) received from 47
+2023/11/15 16:20:34 [notice] 1#1: worker process 47 exited with code 0
+2023/11/15 16:20:34 [notice] 1#1: signal 29 (SIGIO) received
+2023/11/15 16:20:34 [notice] 1#1: signal 17 (SIGCHLD) received from 46
+2023/11/15 16:20:34 [notice] 1#1: worker process 46 exited with code 0
+2023/11/15 16:20:34 [notice] 1#1: exit
+2023/11/15 16:20:51 [notice] 1#1: ModSecurity-nginx v1.0.3 (rules loaded inline/local/remote: 0/794/0)
+2023/11/15 16:20:51 [notice] 1#1: using the "epoll" event method
+2023/11/15 16:20:51 [notice] 1#1: nginx/1.25.3
+2023/11/15 16:20:51 [notice] 1#1: built by gcc 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+2023/11/15 16:20:51 [notice] 1#1: OS: Linux 5.15.0-46-generic
+2023/11/15 16:20:51 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/11/15 16:20:51 [notice] 1#1: start worker processes
+2023/11/15 16:20:51 [notice] 1#1: start worker process 46
+2023/11/15 16:20:51 [notice] 1#1: start worker process 47
+2023/11/15 16:20:51 [notice] 1#1: start cache manager process 48
+2023/11/15 16:20:51 [notice] 1#1: start cache loader process 49
+2023/11/15 16:21:52 [notice] 49#49: http file cache: /var/run/nginx-cache 0.000M, bsize: 4096
+2023/11/15 16:21:52 [notice] 1#1: signal 17 (SIGCHLD) received from 49
+2023/11/15 16:21:52 [notice] 1#1: cache loader process 49 exited with code 0
+2023/11/15 16:21:52 [notice] 1#1: signal 29 (SIGIO) received
