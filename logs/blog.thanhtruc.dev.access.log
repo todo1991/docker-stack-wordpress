@@ -1,1 +1,0 @@
-14.186.240.175 - - [16/Nov/2023:21:34:11 +0700] "GET /wp-admin/install.php?language=en_US HTTP/2.0" 200 2047 "https://blog.thanhtruc.dev/wp-admin/setup-config.php?step=2" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
