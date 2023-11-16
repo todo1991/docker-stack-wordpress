@@ -1,9 +1,9 @@
 # MariaDB
-MARIADB_ROOT_PASSWORD=mariadbpasswdroot
-MARIADB_DATABASE=blogthanhtrucdevdb
-MARIADB_USER=blogthanhtrucdevuser
-MARIADB_PASSWORD=blogthanhtrucdevpasswd
+MARIADB_ROOT_PASSWORD=something
+MARIADB_DATABASE=something
+MARIADB_USER=something
+MARIADB_PASSWORD=something
 
 # Website
-DOMAIN=blog.thanhtruc.dev
-EMAIL=tanqui101091@gmail.com
+DOMAIN=example.com
+EMAIL=myemail@gmail.com
