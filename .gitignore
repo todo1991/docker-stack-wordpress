@@ -1,1 +1,3 @@
 coreruleset
+.env
+*.log
