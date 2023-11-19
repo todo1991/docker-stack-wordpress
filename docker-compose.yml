@@ -75,6 +75,10 @@ services:
     image: todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MARIADB_DATABASE}
+      MYSQL_USER: ${MARIADB_USER}
+      MYSQL_PASSWORD: ${MARIADB_PASSWORD}
     # fix REST-API on Site Health Check wordpress
     extra_hosts:
       - ${DOMAIN}:103.142.26.11
