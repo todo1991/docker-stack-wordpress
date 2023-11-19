@@ -59,7 +59,7 @@ docker compose up -d
 
 Stack  đã có sẵn redis server để kết nối hãy sửa file wp-config.php thêm nội dung sau:
 ```
-define('WP_REDIS_HOST', 'redis-server');
+define('WP_REDIS_HOST', 'redis_server');
 define('WP_REDIS_PORT', 6379);
 ```
 
