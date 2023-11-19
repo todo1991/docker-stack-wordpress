@@ -76,9 +76,10 @@ services:
     container_name: wordpress_instance
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${MARIADB_DATABASE}
-      MYSQL_USER: ${MARIADB_USER}
-      MYSQL_PASSWORD: ${MARIADB_PASSWORD}
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${MARIADB_USER}
+      WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
+      WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
     # fix REST-API on Site Health Check wordpress
     extra_hosts:
       - ${DOMAIN}:103.142.26.11
