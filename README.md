@@ -17,19 +17,19 @@ docker volume create public_html
 docker volume create certbot-ssl
 ```
 
-Step 3: Đăng ký chứng chỉ SSL cho tên miền để stack có thể hoạt động
+Step 3: Đăng ký chứng chỉ SSL cho tên miền để stack có thể hoạt động  
 ```
 docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 certbot/certbot certonly --standalone --email exampleuser@gmail.com --agree-tos --no-eff-email --force-renewal -d example.com -d www.example.com
 ```
-Chú ý thay thế `example.com` bằng tên miền  sẽ hoạt động trên stack này.
+Chú ý thay thế `example.com` bằng tên miền  sẽ hoạt động trên stack này.  
 
 Step 4: Download stack về máy host
 ```
 git clone git@github.com:todo1991/docker-stack-wordpress.git
 ```
-Step 5: đổi tên file `env-example` thành `.env` và điều chỉnh các biến sẽ sử dụng trong stack.
+Step 5: đổi tên file `env-example` thành `.env` và điều chỉnh các biến sẽ sử dụng trong stack.  
 
-Step 6: di chuyển đến thư mục `/docker-stack-wordpress/nginx/modsec` và tải về `coreruleset` để modsec trên nginx có thể hoạt động.
+Step 6: di chuyển đến thư mục `/docker-stack-wordpress/nginx/modsec` và tải về `coreruleset` để modsec trên nginx có thể hoạt động.  
 ```
 git clone  https://github.com/coreruleset/coreruleset.git
 cd coreruleset
@@ -41,14 +41,14 @@ Step 7: Thay đổi tên miền  trong file `/docker-stack-wordpress/nginx/conf.
 ```
 sed -i 's/example.com/domain.com/g' nginx/conf.d/example.com.conf
 ```
-Chú ý thay thế `domain.com` bằng tên miền muốn sử dụng
+Chú ý thay thế `domain.com` bằng tên miền muốn sử dụng . 
 
 
 Step 8: Đổi tên file cấu hình theo tên miền (tùy chọn)
 ```
 mv nginx/conf.d/example.com.conf nginx/conf.d/domain.com.conf
 ```
-Chú ý thay thế domain.com bằng tên miền muốn sử dụng
+Chú ý thay thế domain.com bằng tên miền muốn sử dụng.  
 
 Step 9: khởi đông compose và kiểm tra hoạt động
 ```
