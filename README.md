@@ -50,7 +50,16 @@ mv nginx/conf.d/example.com.conf nginx/conf.d/domain.com.conf
 ```
 Chú ý thay thế domain.com bằng tên miền muốn sử dụng.  
 
-Step 9: khởi đông compose và kiểm tra hoạt động
+Step 9: khởi động compose và kiểm tra hoạt động
 ```
 docker compose up -d
 ```
+
+---
+
+Stack  đã có sẵn redis server để kết nối hãy sửa file wp-config.php thêm nội dung sau:
+```
+define('WP_REDIS_HOST', 'redis-server');
+define('WP_REDIS_PORT', 6379);
+```
+
