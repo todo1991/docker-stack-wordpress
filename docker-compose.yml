@@ -72,8 +72,6 @@ services:
     build:
       context: ./dockerfile
       dockerfile: Dockerfile.wp
-    depends_on:
-      - database
     image: todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
