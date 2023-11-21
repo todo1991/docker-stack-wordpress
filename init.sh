@@ -78,3 +78,5 @@ cp nginx/modsec/coreruleset/crs-setup.conf.example nginx/modsec/coreruleset/crs-
 cp nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 sed -i "s/example.com/$DOMAIN/g" nginx/conf.d/example.com.conf
 mv nginx/conf.d/example.com.conf nginx/conf.d/$DOMAIN.conf
+
+echo "I have completed my mission, in the process of erasing myself."
