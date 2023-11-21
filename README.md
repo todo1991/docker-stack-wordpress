@@ -6,7 +6,7 @@ Bộ docker compose này sẽ hoạt động với tất cả thành phần bao 
 - Mariadb
 - Redis
 - SSL cerbot
-
+  
 Để tránh việc vô ý tác  động vào dữ liệu nên  dữ liệu sẽ được lưu trữ và qủa lý bởi docker volume và  sẽ phải tạo trước khi khởi động compose này,  để có thể sử dụng stack này cần thực hiện chính xác các  bước sau.
 
 Step 1: Trỏ DNS tên miền về  IP docker host, đảm bảo record @ và WWW phải trỏ hoàn tất và  có thể phân giải được trên các DNS puclic của googole(8.8.8.8) hoặc cloudflare (1.1.1.1). Nếu chưa phân giải được về IP máy host vui lòng không  thực hiện các bước tiếp sau để hạn chế việc chạm limit đăng ký ssl Lets encrypt. 
