@@ -11,7 +11,7 @@ while true; do
     if [[ "$DOMAIN" == *" "* ]]; then
         echo "Error: Input cannot contain spaces. Please retype."
     else
-        break
+	break
     fi
 done
 
@@ -39,6 +39,7 @@ while true; do
         break
     fi
 done
+
 while true; do
     # Prompt the user for input
     echo -n "Create DB User: "
