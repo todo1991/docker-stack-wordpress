@@ -58,6 +58,21 @@ done
 MARIADB_PASSWORD=$(openssl rand -base64 9 | tr -d '/+' | cut -c1-12)
 MARIADB_ROOT_PASSWORD=$(openssl rand -base64 9 | tr -d '/+' | cut -c1-12)
 
+# create file .env
+env_file=".env"
+if [ -e "$env_file" ]; then
+    echo "File already exists. Recreating..."
+    rm "$env_file"
+fi
+touch "$env_file"
+
+echo "MARIADB_ROOT_PASSWORD=$MARIADB_ROOT_PASSWORD" >> .env
+echo "MARIADB_DATABASE=$MARIADB_DATABASE" >> .env
+echo "MARIADB_USER=$MARIADB_USER" >> .env
+echo "MARIADB_PASSWORD=$MARIADB_PASSWORD" >> .env 
+echo "DOMAIN=$DOMAIN" >> .env
+
+
 git clone  https://github.com/coreruleset/coreruleset.git nginx/modsec/coreruleset
 cp nginx/modsec/coreruleset/crs-setup.conf.example nginx/modsec/coreruleset/crs-setup.conf
 cp nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
