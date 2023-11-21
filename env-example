@@ -1,9 +1,0 @@
-# MariaDB
-MARIADB_ROOT_PASSWORD=something
-MARIADB_DATABASE=something
-MARIADB_USER=something
-MARIADB_PASSWORD=something
-
-# Website
-DOMAIN=example.com
-EMAIL=myemail@gmail.com
