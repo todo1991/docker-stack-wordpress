@@ -65,6 +65,8 @@ services:
       - type: volume
         source: public_html
         target: /var/www/html
+    depends_on:
+      - wordpressfpm
     networks:
       - wordpressnetworkstack
   
@@ -72,6 +74,8 @@ services:
     build:
       context: ./dockerfile
       dockerfile: Dockerfile.wp
+      args:
+        DOMAIN: ${DOMAIN}
     image: todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
@@ -80,6 +84,9 @@ services:
       WORDPRESS_DB_USER: ${MARIADB_USER}
       WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
       WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_REDIS_HOST', 'redis_server');
+        define('WP_REDIS_PORT', 6379);
     # fix REST-API on Site Health Check wordpress
     extra_hosts:
       - ${DOMAIN}:103.142.26.11
@@ -93,6 +100,43 @@ services:
         read_only: true
     depends_on:
       - database
+      - redis
+    networks:
+      - wordpressnetworkstack
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    dns:
+      - 8.8.8.8
+    volumes:
+      - type: volume
+        source: certbot-ssl
+        target: /etc/letsencrypt
+      - type: volume
+        source: public_html
+        target: /var/www/html
+    networks:
+      - wordpressnetworkstack
+
+  wpcli:
+    image: wordpress:cli
+    container_name: wpcli
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${MARIADB_USER}
+      WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
+      WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_REDIS_HOST', 'redis_server');
+        define('WP_REDIS_PORT', 6379);
+    volumes:
+      - type: volume
+        source: public_html
+        target: /var/www/html
+    depends_on:
+      - database
+      - redis
     networks:
       - wordpressnetworkstack
 
