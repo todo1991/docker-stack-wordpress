@@ -23,3 +23,14 @@ echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache-recommended.
 echo "opcache.use_cwd=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 EOF
+
+ARG DOMAIN
+RUN  <<EOF
+sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/www.conf
+sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/docker.conf
+sed -i "s/\[www]/\[$DOMAIN\]/" /usr/local/etc/php-fpm.d/zz-docker.conf
+sed -i "s/^pm.max_children\s*=.*/pm.max_children = 15/" /usr/local/etc/php-fpm.d/www.conf
+sed -i "s/^pm.start_servers\s*=.*/pm.start_servers = 10/" /usr/local/etc/php-fpm.d/www.conf
+sed -i "s/^pm.min_spare_servers\s*=.*/pm.min_spare_servers = 5/" /usr/local/etc/php-fpm.d/www.conf
+sed -i "s/^pm.max_spare_servers\s*=.*/pm.max_spare_servers = 15/" /usr/local/etc/php-fpm.d/www.conf
+EOF
