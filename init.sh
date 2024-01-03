@@ -31,6 +31,16 @@ if [ "$resolved_ip" != "$main_ip" ] || [ "$resolved_ip" != "$resolved_ip_www" ] 
     exit 1  # Use a non-zero exit code to signal error
 fi
 
+while true; do
+     echo -n "Enter your email address: "
+     read EMAIL
+
+    if [[ $EMAIL =~ ^[^@]+@[^@]+\.[^@]+$ ]]; then
+        break
+    else
+        echo "Invalid email format. Please try again."
+    fi
+done
 
 while true; do
     # Prompt the user for input
@@ -78,7 +88,12 @@ echo "MARIADB_DATABASE=$MARIADB_DATABASE" >> .env
 echo "MARIADB_USER=$MARIADB_USER" >> .env
 echo "MARIADB_PASSWORD=$MARIADB_PASSWORD" >> .env 
 echo "DOMAIN=$DOMAIN" >> .env
+echo "DOMAIN=$EMAIL" >> .env
 
+docker volume create mariadb
+docker volume create public_html
+docker volume create certbot-ssl
+docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 certbot/certbot certonly --standalone --email $EMAIL --agree-tos --no-eff-email --force-renewal -d $DOMAIN -d www.$DOMAIN
 
 git clone  https://github.com/coreruleset/coreruleset.git nginx/modsec/coreruleset
 cp nginx/modsec/coreruleset/crs-setup.conf.example nginx/modsec/coreruleset/crs-setup.conf
@@ -87,5 +102,4 @@ sed -i "s/example.com/$DOMAIN/g" nginx/conf.d/example.com.conf
 mv nginx/conf.d/example.com.conf nginx/conf.d/$DOMAIN.conf
 
 echo "I have completed my mission, in the process of erasing myself."
-rm init.sh
-asfdasf
+# rm init.sh
