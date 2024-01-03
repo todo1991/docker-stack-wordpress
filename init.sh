@@ -81,3 +81,4 @@ mv nginx/conf.d/example.com.conf nginx/conf.d/$DOMAIN.conf
 
 echo "I have completed my mission, in the process of erasing myself."
 rm init.sh
+asfdasf
