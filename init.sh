@@ -88,7 +88,8 @@ echo "MARIADB_DATABASE=$MARIADB_DATABASE" >> .env
 echo "MARIADB_USER=$MARIADB_USER" >> .env
 echo "MARIADB_PASSWORD=$MARIADB_PASSWORD" >> .env 
 echo "DOMAIN=$DOMAIN" >> .env
-echo "DOMAIN=$EMAIL" >> .env
+echo "EMAIL=$EMAIL" >> .env
+echo "IPHOST=$main_ip" >> .env
 
 docker volume create mariadb
 docker volume create public_html
@@ -100,6 +101,9 @@ cp nginx/modsec/coreruleset/crs-setup.conf.example nginx/modsec/coreruleset/crs-
 cp nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 sed -i "s/example.com/$DOMAIN/g" nginx/conf.d/example.com.conf
 mv nginx/conf.d/example.com.conf nginx/conf.d/$DOMAIN.conf
+
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install redis-cache --activate
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install nginx-helper --activate
 
 echo "I have completed my mission, in the process of erasing myself."
 # rm init.sh

@@ -89,7 +89,7 @@ services:
         define('WP_REDIS_PORT', 6379);
     # fix REST-API on Site Health Check wordpress
     extra_hosts:
-      - ${DOMAIN}:103.142.26.11
+      - ${DOMAIN}:${IPHOST}
     volumes:
       - type: volume
         source: public_html
