@@ -17,8 +17,9 @@ done
 
 main_ip="$(ip route get 1.1.1.1 | awk '{print $7}')"
 resolved_ip=$(nslookup "$DOMAIN" | grep -oP 'Address: \K[^\s]+')
+resolved_ip_www=$(nslookup "www.$DOMAIN" | grep -oP 'Address: \K[^\s]+')
 
-if [ "$resolved_ip" != "$main_ip" ]; then
+if [ "$resolved_ip" != "$main_ip" ] or [ "$resolved_ip" != "$main_ip" ]; then
     echo "IP host:   $main_ip"
     echo "IP domain: $resolved_ip"
     echo "Domain not resolve to host, please check and try again!"
