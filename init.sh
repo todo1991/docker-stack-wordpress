@@ -15,17 +15,22 @@ while true; do
     fi
 done
 
+# Determine the main IP address of the host
 main_ip="$(ip route get 1.1.1.1 | awk '{print $7}')"
+
+# Resolve the IP addresses for the domain and www subdomain
 resolved_ip=$(nslookup "$DOMAIN" | grep -oP 'Address: \K[^\s]+')
 resolved_ip_www=$(nslookup "www.$DOMAIN" | grep -oP 'Address: \K[^\s]+')
 
+# Check for IP inconsistencies and handle errors
 if [ "$resolved_ip" != "$main_ip" ] || [ "$resolved_ip" != "$resolved_ip_www" ] || [ "$main_ip" != "$resolved_ip_www" ]; then
     echo "IP host:   $main_ip"
     echo "IP domain: $resolved_ip"
-    echo "IP domain: $resolved_ip_www"
-    echo "Domain not resolve to host, please check and try again!"
-    exit 0
+    echo "IP domain (www): $resolved_ip_www"
+    echo "Domain not resolve to host or www IPs mismatch, please check and try again!"
+    exit 1  # Use a non-zero exit code to signal error
 fi
+
 
 while true; do
     # Prompt the user for input
