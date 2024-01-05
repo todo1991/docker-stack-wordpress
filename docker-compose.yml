@@ -29,7 +29,7 @@ services:
     networks:
       - wordpressnetworkstack
 
-  nginxserverproxy:
+  nginxserver:
     build:
       context: ./dockerfile
       dockerfile: Dockerfile.alpine
