@@ -43,3 +43,12 @@ define('WP_REDIS_HOST', 'redis_server');
 define('WP_REDIS_PORT', 6379);
 ```
 
+Hướng dẫn backup database của webiste
+```
+docker exec mariadb mariadb-dump --databases ${MARIADB_DATABASE} -u${MARIADB_USER} -p${MARIADB_PASSWORD} > mariadb-dump-$(date +%F_%H-%M-%S).sql
+```
+
+Hướng dẫn backup mã nguồn của website
+```
+
+```
