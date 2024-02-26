@@ -42,13 +42,18 @@ Stack  đã có sẵn redis server để kết nối hãy sửa file wp-config.p
 define('WP_REDIS_HOST', 'redis_server');
 define('WP_REDIS_PORT', 6379);
 ```
-
-Hướng dẫn backup database của webiste
+Cài đặt plugin quản lý cache và redis
 ```
-docker exec mariadb mariadb-dump --databases ${MARIADB_DATABASE} -u${MARIADB_USER} -p${MARIADB_PASSWORD} > mariadb-dump-$(date +%F_%H-%M-%S).sql
-```
-
-Hướng dẫn backup mã nguồn của website
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install redis-cache --activate
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install nginx-helper --activate
 ```
 
+# Hướng dẫn backup database của webiste
+```
+source .env && docker compose  exec mariadb mariadb-dump --databases ${MARIADB_DATABASE} -u${MARIADB_USER} -p${MARIADB_PASSWORD} > mariadb-dump-$(date +%F_%H-%M-%S).sql
+```
+
+# Hướng dẫn backup mã nguồn của website
+```
+docker run --rm --volumes-from wordpress_instance -v $(pwd):/backup ubuntu tar cvf /backup/backupcode-$(date +%F_%H-%M-%S).tar /var/www/html
 ```
