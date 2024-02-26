@@ -55,5 +55,5 @@ source .env && docker compose  exec mariadb mariadb-dump --databases ${MARIADB_D
 
 # Hướng dẫn backup mã nguồn của website
 ```
-docker run --rm --volumes-from wordpress_instance -v $(pwd):/backup ubuntu tar cvf /backup/backupcode-$(date +%F_%H-%M-%S).tar /var/www/html
+docker run --rm --volumes-from wordpress_instance -v $(pwd):/backup alpine tar cvf /backup/backupcode-$(date +%F_%H-%M-%S).tar /var/www/html
 ```
