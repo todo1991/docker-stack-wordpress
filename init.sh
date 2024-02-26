@@ -102,8 +102,5 @@ cp nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.ex
 sed -i "s/example.com/$DOMAIN/g" nginx/conf.d/example.com.conf
 mv nginx/conf.d/example.com.conf nginx/conf.d/$DOMAIN.conf
 
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install redis-cache --activate
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install nginx-helper --activate
-
 echo "I have completed my mission, in the process of erasing myself."
 # rm init.sh
