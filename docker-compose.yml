@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   mariadb:
-    image: mariadb:10.6.14-focal
+    image: mariadb:10.11.7-jammy
     container_name: mariadb
     restart: unless-stopped
     environment:
