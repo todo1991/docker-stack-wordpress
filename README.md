@@ -46,6 +46,9 @@ Cài đặt plugin quản lý cache và redis
 ```
 docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install redis-cache --activate
 docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install nginx-helper --activate
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-fonts --activate
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-scripts --activate
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-pages --activate
 ```
 
 # Hướng dẫn backup database của webiste
