@@ -37,11 +37,6 @@ docker compose up -d
 
 ---
 
-Stack  đã có sẵn redis server để kết nối hãy sửa file wp-config.php thêm nội dung sau:
-```
-define('WP_REDIS_HOST', 'redis_server');
-define('WP_REDIS_PORT', 6379);
-```
 Cài đặt plugin quản lý cache và redis
 ```
 docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install redis-cache --activate
