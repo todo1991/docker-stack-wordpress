@@ -18,19 +18,13 @@ docker volume create public_html
 docker volume create certbot-ssl
 ```
 
-Step 3: Đăng ký chứng chỉ SSL cho tên miền để stack có thể hoạt động  
-```
-docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 certbot/certbot certonly --standalone --email exampleuser@gmail.com --agree-tos --no-eff-email --force-renewal -d example.com -d www.example.com
-```
-Chú ý thay thế `example.com` bằng tên miền  sẽ hoạt động trên stack này.  
-
-step 4: chạy file init.sh để thay đổi các file conf
+step 3: chạy file init.sh để thay đổi các file conf
 ```
 chmod +x init.sh
 ./init.sh
 ```
 
-Step 5: khởi động compose và kiểm tra hoạt động
+Step 4: khởi động compose và kiểm tra hoạt động
 ```
 docker compose up -d
 ```
