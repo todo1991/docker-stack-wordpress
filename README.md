@@ -11,20 +11,13 @@ Bộ docker compose này sẽ hoạt động với tất cả thành phần bao 
 
 Step 1: Trỏ DNS tên miền về  IP docker host, đảm bảo record @ và WWW phải trỏ hoàn tất và  có thể phân giải được trên các DNS puclic của googole(8.8.8.8) hoặc cloudflare (1.1.1.1). Nếu chưa phân giải được về IP máy host vui lòng không  thực hiện các bước tiếp sau để hạn chế việc chạm limit đăng ký ssl Lets encrypt. 
 
-Step 2: Khởi tạo các volume docker cần thiết cho stack
-```
-docker volume create mariadb
-docker volume create public_html
-docker volume create certbot-ssl
-```
-
-step 3: chạy file init.sh để thay đổi các file conf
+step 2: chạy file init.sh để thay đổi các file conf
 ```
 chmod +x init.sh
 ./init.sh
 ```
 
-Step 4: khởi động compose và kiểm tra hoạt động
+Step 3: khởi động compose và kiểm tra hoạt động
 ```
 docker compose up -d
 ```
