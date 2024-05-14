@@ -49,3 +49,7 @@ source .env && docker compose  exec mariadb mariadb-dump --databases ${MARIADB_D
 ```
 docker run --rm --volumes-from wordpress_instance -v $(pwd):/backup alpine tar cvf /backup/backupcode-$(date +%F_%H-%M-%S).tar /var/www/html
 ```
+# Thêm cron gia hạn SSL mỗi ngày vào 2h sáng
+```
+0 2 * * * bash /pathtofile/ssl_renew.sh >/dev/null 2>&1
+```
