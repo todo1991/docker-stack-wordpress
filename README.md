@@ -26,7 +26,7 @@ docker compose up -d
 
 Cài đặt plugin quản lý cache và redis
 ```
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install redis-cache --activate
+docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install docket-cache --activate
 docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install nginx-helper --activate
 docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-fonts --activate
 docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-scripts --activate
