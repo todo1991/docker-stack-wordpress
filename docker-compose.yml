@@ -15,15 +15,25 @@ services:
       - type: volume
         source: mariadb
         target: /var/lib/mysql
+      - type: bind
+        source: ./conf/mariadb/mariadbcustom.cnf
+        target: /etc/mysql/conf.d/mariadbcustom.cnf
+        read_only: true
     networks:
       - wordpressnetworkstack
 
   redis:
     image: redis
-    container_name: redis
+    container_name: redis:alpine
     restart: unless-stopped
     expose:
       - 6379
+    volumes:
+      - type: bind
+        source: ./conf/redis/redis.conf
+        target: /usr/local/etc/redis/redis.conf
+        read_only: true
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - wordpressnetworkstack
 
@@ -45,16 +55,16 @@ services:
         target: /etc/localtime
         read_only: true
       - type: bind
-        source: ./nginx/nginx.conf
+        source: ./conf/nginx/nginx.conf
         target: /etc/nginx/nginx.conf
       - type: bind
-        source: ./nginx/conf.d
+        source: ./conf/nginx/conf.d
         target: /etc/nginx/conf.d
       - type: bind
         source: ./logs
         target: /var/log/nginx
       - type: bind
-        source: ./nginx/modsec
+        source: ./conf/nginx/modsec
         target: /etc/nginx/modsec
       - type: volume
         source: certbot-ssl

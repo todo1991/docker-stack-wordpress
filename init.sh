@@ -96,11 +96,11 @@ docker volume create public_html
 docker volume create certbot-ssl
 docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 certbot/certbot certonly --standalone --email $EMAIL --agree-tos --no-eff-email --force-renewal -d $DOMAIN -d www.$DOMAIN
 
-git clone  https://github.com/coreruleset/coreruleset.git nginx/modsec/coreruleset
-cp nginx/modsec/coreruleset/crs-setup.conf.example nginx/modsec/coreruleset/crs-setup.conf
-cp nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
-sed -i "s/example.com/$DOMAIN/g" nginx/conf.d/example.com.conf
-mv nginx/conf.d/example.com.conf nginx/conf.d/$DOMAIN.conf
+git clone  https://github.com/coreruleset/coreruleset.git conf/nginx/modsec/coreruleset
+cp conf/nginx/modsec/coreruleset/crs-setup.conf.example conf/nginx/modsec/coreruleset/crs-setup.conf
+cp conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+sed -i "s/example.com/$DOMAIN/g" conf/nginx/conf.d/example.com.conf
+mv conf/nginx/conf.d/example.com.conf conf/nginx/conf.d/$DOMAIN.conf
 
 echo "I have completed my mission, in the process of erasing myself."
 # rm init.sh
