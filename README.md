@@ -24,13 +24,18 @@ docker compose up -d
 
 ---
 
-Cài đặt plugin quản lý cache và redis
+# Cài đặt plugin quản lý cache và redis
+Mặc định thì init.sh đã thêm aliases wp-cli để rút ngắn câu lệnh, nhưng nếu không có thể  chay lệnh sau
 ```
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install redis-cache --activate
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install nginx-helper --activate
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-fonts --activate
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-scripts --activate
-docker compose run -ti --rm --no-deps --quiet-pull wpcli plugin install flying-pages --activate
+echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >> ~/.bash_aliases
+```
+Sau đó có thể gọi lệnh wpcli từ thư mục compose gọn gàng
+```
+wpcli plugin install redis-cache --activate
+wpcli plugin install nginx-helper --activate
+wpcli plugin install flying-fonts --activate
+wpcli plugin install flying-scripts --activate
+wpcli plugin install flying-pages --activate
 ```
 
 # Hướng dẫn backup database của webiste
