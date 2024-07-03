@@ -48,6 +48,7 @@ source .env && docker compose  exec mariadb mariadb-dump --databases ${MARIADB_D
 docker run --rm --volumes-from wordpress_instance -v $(pwd):/backup alpine tar cvf /backup/backupcode-$(date +%F_%H-%M-%S).tar /var/www/html
 ```
 # Thêm cron gia hạn SSL mỗi ngày vào 2h sáng
+Mặc định init.sh đã thêm cron gia hạn ssl tự động, nếu vì lý do gì đó bị mất  thì có thể thiết lập lại cron như sau:
 ```
 0 2 * * * bash /pathtofile/ssl_renew.sh >/dev/null 2>&1
 ```
