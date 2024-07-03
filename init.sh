@@ -11,7 +11,7 @@ while true; do
     if [[ "$DOMAIN" == *" "* ]]; then
         echo "Error: Input cannot contain spaces. Please retype."
     else
-	break
+        break
     fi
 done
 
@@ -19,8 +19,8 @@ done
 main_ip="$(ip route get 1.1.1.1 | awk '{print $7}')"
 
 # Resolve the IP addresses for the domain and www subdomain
-resolved_ip=$(nslookup "$DOMAIN" | grep -oP 'Address: \K[^\s]+')
-resolved_ip_www=$(nslookup "www.$DOMAIN" | grep -oP 'Address: \K[^\s]+')
+resolved_ip=$(nslookup "$DOMAIN" -type=a| grep -oP 'Address: \K[^\s]+')
+resolved_ip_www=$(nslookup "www.$DOMAIN" -type=a| grep -oP 'Address: \K[^\s]+')
 
 # Check for IP inconsistencies and handle errors
 if [ "$resolved_ip" != "$main_ip" ] || [ "$resolved_ip" != "$resolved_ip_www" ] || [ "$main_ip" != "$resolved_ip_www" ]; then
@@ -41,7 +41,6 @@ while true; do
         echo "Invalid email format. Please try again."
     fi
 done
-
 while true; do
     # Prompt the user for input
     echo -n "Create DB Name: "
@@ -74,7 +73,6 @@ done
 
 MARIADB_PASSWORD=$(openssl rand -base64 9 | tr -d '/+' | cut -c1-12)
 MARIADB_ROOT_PASSWORD=$(openssl rand -base64 9 | tr -d '/+' | cut -c1-12)
-
 # create file .env
 env_file=".env"
 if [ -e "$env_file" ]; then
@@ -86,7 +84,7 @@ touch "$env_file"
 echo "MARIADB_ROOT_PASSWORD=$MARIADB_ROOT_PASSWORD" >> .env
 echo "MARIADB_DATABASE=$MARIADB_DATABASE" >> .env
 echo "MARIADB_USER=$MARIADB_USER" >> .env
-echo "MARIADB_PASSWORD=$MARIADB_PASSWORD" >> .env 
+echo "MARIADB_PASSWORD=$MARIADB_PASSWORD" >> .env
 echo "DOMAIN=$DOMAIN" >> .env
 echo "EMAIL=$EMAIL" >> .env
 echo "IPHOST=$main_ip" >> .env
@@ -96,11 +94,23 @@ docker volume create public_html
 docker volume create certbot-ssl
 docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 certbot/certbot certonly --standalone --email $EMAIL --agree-tos --no-eff-email --force-renewal -d $DOMAIN -d www.$DOMAIN
 
+# add modsec
 git clone  https://github.com/coreruleset/coreruleset.git conf/nginx/modsec/coreruleset
 cp conf/nginx/modsec/coreruleset/crs-setup.conf.example conf/nginx/modsec/coreruleset/crs-setup.conf
 cp conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 sed -i "s/example.com/$DOMAIN/g" conf/nginx/conf.d/example.com.conf
 mv conf/nginx/conf.d/example.com.conf conf/nginx/conf.d/$DOMAIN.conf
 
+# add cronjob renewssl
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+SSL_RENEW_SCRIPT="$SCRIPT_DIR/ssl_renew.sh"
+crontab -l > mycron
+echo "0 2 * * * $SSL_RENEW_SCRIPT" >> mycron
+crontab mycron
+rm mycron
+echo "Cron job added to run ssl_renew.sh every day at 2AM."
+
+# done
 echo "I have completed my mission, in the process of erasing myself."
-# rm init.sh
+rm init.sh
+echo "Have a nive day !!!"
