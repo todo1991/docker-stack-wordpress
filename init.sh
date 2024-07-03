@@ -107,6 +107,15 @@ mv conf/nginx/conf.d/example.com.conf conf/nginx/conf.d/$DOMAIN.conf
 
 # add cronjob renewssl
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
+cat <<EOF >> ssl_renew.sh
+#!/bin/bash
+DOCKER="/usr/bin/docker"
+cd $SCRIPT_DIR
+\$DOCKER compose run --rm certbot --webroot --webroot-path=/var/www/html renew
+\$DOCKER restart nginx
+EOF
+
 SSL_RENEW_SCRIPT="$SCRIPT_DIR/ssl_renew.sh"
 crontab -l > mycron
 echo "0 2 * * * $SSL_RENEW_SCRIPT" >> mycron
