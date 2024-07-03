@@ -115,6 +115,7 @@ rm mycron
 echo "Cron job added to run ssl_renew.sh every day at 2AM."
 
 # done
+echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >> ~/.bash_aliases
 echo "I have completed my mission, in the process of erasing myself."
 rm init.sh
 echo "Have a nive day !!!"
