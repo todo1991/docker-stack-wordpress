@@ -1,5 +1,9 @@
 #!/bin/bash
+# Update package list and install dnsutils and cron
+apt-get update
+apt-get install -y dnsutils cron
 
+# domain infomation
 while true; do
     # Prompt the user for input
     echo -n "Domain website: "
