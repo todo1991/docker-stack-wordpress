@@ -1,7 +1,9 @@
 #!/bin/bash
+
 # Update package list and install dnsutils and cron
-apt-get update
-apt-get install -y dnsutils cron
+Echo "Update and install necessary packages"
+apt-get update > /dev/null
+apt-get install -y dnsutils cron > /dev/null
 
 # domain infomation
 while true; do
@@ -99,7 +101,7 @@ docker volume create certbot-ssl
 docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 certbot/certbot certonly --standalone --email $EMAIL --agree-tos --no-eff-email --force-renewal -d $DOMAIN -d www.$DOMAIN
 
 # add modsec
-git clone  https://github.com/coreruleset/coreruleset.git conf/nginx/modsec/coreruleset
+git clone  https://github.com/coreruleset/coreruleset.git conf/nginx/modsec/coreruleset > /dev/null
 cp conf/nginx/modsec/coreruleset/crs-setup.conf.example conf/nginx/modsec/coreruleset/crs-setup.conf
 cp conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 sed -i "s/example.com/$DOMAIN/g" conf/nginx/conf.d/example.com.conf
