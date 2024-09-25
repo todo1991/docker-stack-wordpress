@@ -1,24 +1,16 @@
-[mariadb]
-# CHANGED on 29.june.2023
-
-innodb_file_per_table=1
-innodb_buffer_pool_size=1G
-innodb_log_file_size=512M # updated 29.june.2023, increased
-
-# only if you are using MariaDB
-# query cache is not available in MySQL8+
-query_cache_type=1
-query_cache_limit=128K
-query_cache_size=64M
-query_cache_min_res_unit=512
-
-performance_schema=0
-
-sql-mode="NO_ENGINE_SUBSTITUTION"
-
-# ADDED on 29.june.2023
-innodb_io_capacity = 2000
-innodb_io_capacity_max = 5000
-innodb_checksum_algorithm = crc32
-innodb_log_compressed_pages=OFF
-innodb_change_buffering=all
+  1 [mariadb]
+  2 
+  3 innodb_flush_method = O_DIRECT
+  4 innodb_file_per_table=1
+  5 innodb_buffer_pool_size=1G
+  6 innodb_log_file_size=512M
+  7 
+  8 performance_schema=0
+  9 sql-mode="NO_ENGINE_SUBSTITUTION"
+ 10 
+ 11 innodb_read_io_threads = 20
+ 12 innodb_write_io_threads = 2
+ 13 innodb_doublewrite = 0
+ 14 innodb_flush_log_at_trx_commit = 2
+ 15 innodb_io_capacity = 2000
+ 16 innodb_io_capacity_max = 5000
