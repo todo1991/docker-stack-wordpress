@@ -125,7 +125,7 @@ EOF
 
 SSL_RENEW_SCRIPT="$SCRIPT_DIR/ssl_renew.sh"
 crontab -l > mycron
-echo "0 2 * * * $SSL_RENEW_SCRIPT >/dev/null 2>&1" >> mycron
+echo "0 2 * * * bash $SSL_RENEW_SCRIPT >/dev/null 2>&1" >> mycron
 crontab mycron
 rm mycron
 echo "Cron job added to run ssl_renew.sh every day at 2AM."
