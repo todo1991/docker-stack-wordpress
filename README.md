@@ -31,11 +31,12 @@ echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >>
 ```
 Sau đó có thể gọi lệnh wpcli từ thư mục compose gọn gàng
 ```
+# các plugin nên cài
 wpcli plugin install redis-cache --activate
 wpcli plugin install flying-fonts --activate
 wpcli plugin install flying-scripts --activate
 wpcli plugin install flying-pages --activate
-# Không cần cài plugin này để update cache nguyên nhân là do nginx đang cấu hình fastcgi_cache_valid 1s, nếu cần thết lập lưu cache lâu hơn thì có thể  cài thêm plugin này để update cache tự động khi có thay đổi  nội dung  website. 
+# Không cần cài plugin bên dưới, nguyên nhân là do nginx đang cấu hình fastcgi_cache_valid 1s, nếu cần thết lập lưu cache lâu hơn thì có thể  cài thêm plugin này để update cache tự động khi có thay đổi  nội dung  website. 
 wpcli plugin install nginx-helper --activate
 ```
 
