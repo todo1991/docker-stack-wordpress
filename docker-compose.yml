@@ -154,6 +154,7 @@ networks:
   wordpressnetworkstack:
     driver: bridge
     name: wordpressnetworkstack
+    enable_ipv6: true
 
 volumes:
   certbot-ssl:
