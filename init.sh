@@ -6,7 +6,7 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Update package list and install dnsutils and cron
-Echo "Update and install necessary packages"
+echo "Update and install necessary packages"
 apt-get update > /dev/null
 apt-get install -y dnsutils cron > /dev/null
 
