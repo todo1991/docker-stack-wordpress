@@ -22,6 +22,7 @@ echo "opcache.interned_strings_buffer=16" >> /usr/local/etc/php/conf.d/opcache-r
 echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 echo "opcache.use_cwd=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
+echo "expose_php = off" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 echo "disable_functions = curl_multi_exec, dbase_open, dbmopen, dl, eval, exec, fopen_with_path, fpassthru, highlight_file, passthru, pcntl_alarm, pcntl_exec, pcntl_fork, pcntl_get_last_error, pcntl_getpriority, pcntl_setpriority, pcntl_signal, pcntl_signal_dispatch, pcntl_sigprocmask, pcntl_sigtimedwait, pcntl_sigwaitinfo, pcntl_strerror, pcntl_wait, pcntl_waitpid, pcntl_wexitstatus, pcntl_wifcontinued, pcntl_wifexited, pcntl_wifsignaled, pcntl_wifstopped, pcntl_wstopsig, pcntl_wtermsig, popen, posix_getpwuid, posix_kill, posix_mkfifo, posix_setegid, posix_seteuid, posix_setgid, posix_setpgid, posix_setsid, posix_setuid, posix_uname, proc_close, proc_open, shell_exec, show_source, system" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 EOF
 
