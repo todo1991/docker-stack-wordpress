@@ -9,9 +9,9 @@ Bộ docker compose này sẽ hoạt động với tất cả thành phần bao 
 
 Để tránh việc vô ý tác  động vào dữ liệu nên  dữ liệu sẽ được lưu trữ và quản lý bởi docker volume và  sẽ phải tạo trước khi khởi động compose này,  để có thể sử dụng stack này cần thực hiện chính xác các  bước sau.
 
-Step 1: Trỏ DNS tên miền về  IP docker host, đảm bảo record @ và WWW phải trỏ hoàn tất và  có thể phân giải được trên các DNS puclic của googole(8.8.8.8) hoặc cloudflare (1.1.1.1). Nếu chưa phân giải được về IP máy host vui lòng không  thực hiện các bước tiếp sau để hạn chế việc chạm limit đăng ký ssl Lets encrypt.
+Step 1: Trỏ DNS tên miền về IP docker host, đảm bảo record @ và WWW phải trỏ hoàn tất và có thể phân giải được trên các DNS public của google (8.8.8.8) hoặc cloudflare (1.1.1.1). Nếu chưa phân giải được về IP máy host vui lòng không thực hiện các bước tiếp sau để hạn chế việc chạm limit đăng ký ssl Let's Encrypt.
 
-step 2: chạy file init.sh để thay đổi các file conf
+Step 2: chạy file init.sh để thay đổi các file conf
 ```
 chmod +x init.sh
 ./init.sh
@@ -25,7 +25,7 @@ docker compose up -d
 ---
 
 # Cài đặt plugin quản lý cache và redis
-Mặc định thì init.sh đã thêm aliases wp-cli để rút ngắn câu lệnh, nhưng nếu không có thể  chay lệnh sau(chú ý thoát ssh và login lại để load biến môi trường mới hoặc dùng lệnh soucre để áp dụng biến môi trường lập tức)
+Mặc định thì init.sh đã thêm aliases wp-cli để rút ngắn câu lệnh, nhưng nếu không có thể  chạy lệnh sau(chú ý thoát ssh và login lại để load biến môi trường mới hoặc dùng lệnh source để áp dụng biến môi trường lập tức)
 ```
 echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >> ~/.bash_aliases
 ```
@@ -36,11 +36,11 @@ wpcli plugin install redis-cache --activate
 wpcli plugin install flying-fonts --activate
 wpcli plugin install flying-scripts --activate
 wpcli plugin install flying-pages --activate
-# Không cần cài plugin bên dưới, nguyên nhân là do nginx đang cấu hình fastcgi_cache_valid 1s, nếu cần thết lập lưu cache lâu hơn thì có thể  cài thêm plugin này để update cache tự động khi có thay đổi  nội dung  website.
+# Không cần cài plugin bên dưới, nguyên nhân là do nginx đang cấu hình fastcgi_cache_valid 1s, nếu cần thiết lập lưu cache lâu hơn thì có thể  cài thêm plugin này để update cache tự động khi có thay đổi  nội dung  website.
 wpcli plugin install nginx-helper --activate
 ```
 
-# Hướng dẫn backup database của webiste
+# Hướng dẫn backup database của website
 ```
 source .env && docker compose  exec mariadb mariadb-dump --databases ${MARIADB_DATABASE} -u${MARIADB_USER} -p${MARIADB_PASSWORD} > mariadb-dump-$(date +%F_%H-%M-%S).sql
 ```
