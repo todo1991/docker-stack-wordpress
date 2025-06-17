@@ -1,14 +1,17 @@
+version: "3.9"
 services:
 
   mariadb:
     image: mariadb:10.11.7-jammy
     container_name: mariadb
     restart: unless-stopped
-    environment:
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     expose:
       - 3306
     volumes:
@@ -31,13 +34,18 @@ services:
     command: ["redis-server", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
     networks:
       - wordpressnetworkstack
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   nginx:
     build:
       context: ./dockerfile
       dockerfile: Dockerfile.alpine
       args:
-        ENABLED_MODULES: testcookie-nginx-module ngx_cache_purge modsecurity brotli 
+        ENABLED_MODULES: testcookie-nginx-module ngx_cache_purge modsecurity brotli
     image: todo1991/nginx_wordpress_alpine
     container_name: nginx
     restart: unless-stopped
@@ -72,9 +80,15 @@ services:
         target: /var/www/html
     depends_on:
       - wordpress_instance
+      - certbot
     networks:
       - wordpressnetworkstack
-  
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep nginx >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   wordpress_instance:
     build:
       context: ./dockerfile
@@ -84,6 +98,8 @@ services:
     image: todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_USER: ${MARIADB_USER}
@@ -111,6 +127,11 @@ services:
       - redis
     networks:
       - wordpressnetworkstack
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep php-fpm >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   certbot:
     image: certbot/certbot
@@ -130,6 +151,8 @@ services:
   wpcli:
     image: wordpress:cli
     container_name: wpcli
+    env_file:
+      - .env
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_USER: ${MARIADB_USER}
