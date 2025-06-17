@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Check if Docker is installed
 if ! command -v docker &> /dev/null; then
     echo "Docker is not installed. Please install docker first!"
@@ -127,7 +128,7 @@ cd $SCRIPT_DIR
 EOF
 
 SSL_RENEW_SCRIPT="$SCRIPT_DIR/ssl_renew.sh"
-crontab -l > mycron
+crontab -l > mycron 2>/dev/null || true
 echo "0 2 * * * bash $SSL_RENEW_SCRIPT >/dev/null 2>&1" >> mycron
 crontab mycron
 rm mycron
