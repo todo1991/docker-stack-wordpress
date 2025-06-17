@@ -2,10 +2,10 @@
 
 Bộ docker compose này sẽ hoạt động với tất cả thành phần bao gồm:
 - Nginx
-- Fhp-Fpm (wordrepss)
+- PHP-FPM (WordPress)
 - Mariadb
 - Redis
-- SSL cerbot
+- SSL certbot
   
 Để tránh việc vô ý tác  động vào dữ liệu nên  dữ liệu sẽ được lưu trữ và quản lý bởi docker volume và  sẽ phải tạo trước khi khởi động compose này,  để có thể sử dụng stack này cần thực hiện chính xác các  bước sau.
 
