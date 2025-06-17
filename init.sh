@@ -5,10 +5,10 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# Update package list and install dnsutils and cron
+# Update package list and install dnsutils, git, and cron
 echo "Update and install necessary packages"
 apt-get update > /dev/null
-apt-get install -y dnsutils cron > /dev/null
+apt-get install -y dnsutils git cron > /dev/null
 
 # domain infomation
 while true; do
