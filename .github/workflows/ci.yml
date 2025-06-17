@@ -1,0 +1,16 @@
+name: CI
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Validate docker compose
+        run: docker compose config
+      - name: Lint init.sh
+        run: bash -n init.sh
