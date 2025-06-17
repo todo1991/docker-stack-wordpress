@@ -1,3 +1,4 @@
+---
 version: "3.9"
 services:
 
@@ -31,7 +32,14 @@ services:
     restart: unless-stopped
     expose:
       - 6379
-    command: ["redis-server", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    command:
+      - redis-server
+      - --appendonly
+      - "no"
+      - --maxmemory
+      - 256mb
+      - --maxmemory-policy
+      - allkeys-lru
     networks:
       - wordpressnetworkstack
     healthcheck:
@@ -45,7 +53,9 @@ services:
       context: ./dockerfile
       dockerfile: Dockerfile.alpine
       args:
-        ENABLED_MODULES: testcookie-nginx-module ngx_cache_purge modsecurity brotli
+        ENABLED_MODULES: >
+          testcookie-nginx-module ngx_cache_purge
+          modsecurity brotli
     image: todo1991/nginx_wordpress_alpine
     container_name: nginx
     restart: unless-stopped
@@ -106,7 +116,8 @@ services:
       WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
       WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
       WORDPRESS_CONFIG_EXTRA: |
-        # define('DISALLOW_FILE_EDIT', true); # enable if no plugin need edit file!
+        # define('DISALLOW_FILE_EDIT', true);
+        # enable if no plugin need edit file!
         define('WP_REDIS_HOST', 'redis');
         define('WP_REDIS_PORT', 6379);
         define('WP_MEMORY_LIMIT', '512M');
