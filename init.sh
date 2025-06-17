@@ -16,7 +16,7 @@ while true; do
     echo -n "Domain website: "
 
     # Read input and assign it to a variable
-    read DOMAIN
+    read -r DOMAIN
 
     # Check if the input contains spaces
     if [[ "$DOMAIN" == *" "* ]]; then
@@ -44,7 +44,7 @@ fi
 
 while true; do
      echo -n "Enter your email address: "
-     read EMAIL
+     read -r EMAIL
 
     if [[ $EMAIL =~ ^[^@]+@[^@]+\.[^@]+$ ]]; then
         break
@@ -57,7 +57,7 @@ while true; do
     echo -n "Create DB Name: "
 
     # Read input and assign it to a variable
-    read MARIADB_DATABASE
+    read -r MARIADB_DATABASE
 
     # Check if the input contains spaces
     if [[ "$MARIADB_DATABASE" == *" "* ]]; then
@@ -72,7 +72,7 @@ while true; do
     echo -n "Create DB User: "
 
     # Read input and assign it to a variable
-    read MARIADB_USER
+    read -r MARIADB_USER
 
     # Check if the input contains spaces
     if [[ "$MARIADB_USER" == *" "* ]]; then
@@ -91,26 +91,29 @@ if [ -e "$env_file" ]; then
     rm "$env_file"
 fi
 touch "$env_file"
-
-echo "MARIADB_ROOT_PASSWORD=$MARIADB_ROOT_PASSWORD" >> .env
-echo "MARIADB_DATABASE=$MARIADB_DATABASE" >> .env
-echo "MARIADB_USER=$MARIADB_USER" >> .env
-echo "MARIADB_PASSWORD=$MARIADB_PASSWORD" >> .env
-echo "DOMAIN=$DOMAIN" >> .env
-echo "EMAIL=$EMAIL" >> .env
-echo "IPHOST=$main_ip" >> .env
+cat <<EOF > "$env_file"
+MARIADB_ROOT_PASSWORD=$MARIADB_ROOT_PASSWORD
+MARIADB_DATABASE=$MARIADB_DATABASE
+MARIADB_USER=$MARIADB_USER
+MARIADB_PASSWORD=$MARIADB_PASSWORD
+DOMAIN=$DOMAIN
+EMAIL=$EMAIL
+IPHOST=$main_ip
+EOF
 
 docker volume create mariadb
 docker volume create public_html
 docker volume create certbot-ssl
-docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 certbot/certbot certonly --standalone --email $EMAIL --agree-tos --no-eff-email --force-renewal -d $DOMAIN -d www.$DOMAIN
+docker run -it --rm --name certbotssl -v "certbot-ssl:/etc/letsencrypt" -p 80:80 \
+  certbot/certbot certonly --standalone --email "$EMAIL" --agree-tos \
+  --no-eff-email --force-renewal -d "$DOMAIN" -d "www.$DOMAIN"
 
 # add modsec
 git clone  https://github.com/coreruleset/coreruleset.git conf/nginx/modsec/coreruleset > /dev/null
 cp conf/nginx/modsec/coreruleset/crs-setup.conf.example conf/nginx/modsec/coreruleset/crs-setup.conf
 cp conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 sed -i "s/example.com/$DOMAIN/g" conf/nginx/conf.d/example.com.conf
-mv conf/nginx/conf.d/example.com.conf conf/nginx/conf.d/$DOMAIN.conf
+mv conf/nginx/conf.d/example.com.conf "conf/nginx/conf.d/${DOMAIN}.conf"
 
 # add cronjob renewssl
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
@@ -132,6 +135,7 @@ echo "Cron job added to run ssl_renew.sh every day at 2AM."
 
 # done
 echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >> ~/.bash_aliases
+# shellcheck source=/dev/null
 source ~/.bash_aliases
 echo "I have completed my mission, in the process of erasing myself."
 rm init.sh
