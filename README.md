@@ -54,3 +54,7 @@ Mặc định init.sh đã thêm cron gia hạn ssl tự động, nếu vi�
 ```
 0 2 * * * bash /pathtofile/ssl_renew.sh >/dev/null 2>&1
 ```
+
+## License
+This project is licensed under the [MIT License](LICENSE).
+
