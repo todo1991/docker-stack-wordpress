@@ -135,4 +135,4 @@ echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >>
 source ~/.bash_aliases
 echo "I have completed my mission, in the process of erasing myself."
 rm init.sh
-echo "Have a nive day !!!"
+echo "Have a nice day !!!"
