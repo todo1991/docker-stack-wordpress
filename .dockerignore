@@ -1,0 +1,16 @@
+# Exclude log files and logs directory
+logs/
+*.log
+
+# Exclude optional modsecurity ruleset
+conf/nginx/modsec/coreruleset/
+
+# Ignore version control and CI files
+.git
+.github
+.gitignore
+
+# Environment examples or local environment files
+.env
+.env.example
+
