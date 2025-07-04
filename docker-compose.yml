@@ -114,6 +114,7 @@ services:
       WORDPRESS_DB_USER: ${MARIADB_USER}
       WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
       WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: wpstack_
       WORDPRESS_CONFIG_EXTRA: |
         # define('DISALLOW_FILE_EDIT', true);
         # enable if no plugin need edit file!
