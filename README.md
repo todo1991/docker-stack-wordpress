@@ -85,7 +85,7 @@ docker run --rm todo1991/phpfpm_wordpress_alpine cat /usr/src/wordpress/wp-confi
 docker cp wp-config.php wordpress_instance:/var/www/html/wp-config.php && rm -f wp-config.php
 docker exec -it wordpress_instance chown -R www-data:www-data /var/www/html
 ```
-Như vậy là đã hoàn tất, có thể  tắt  bật lại compose và kiểm tra hoạt đông
+Như vậy là đã hoàn tất, có thể  tắt  bật lại compose và kiểm tra hoạt động
 ```
 docker compose down
 docker compose up -d
