@@ -11,7 +11,7 @@ Bộ docker compose này sẽ hoạt động với tất cả thành phần bao 
 
 Step 1: Trỏ DNS tên miền về  IP docker host, đảm bảo record @ và WWW phải trỏ hoàn tất và  có thể phân giải được trên các DNS puclic của googole(8.8.8.8) hoặc cloudflare (1.1.1.1). Nếu chưa phân giải được về IP máy host vui lòng không  thực hiện các bước tiếp sau để hạn chế việc chạm limit đăng ký ssl Lets encrypt.
 
-Step 2: tạo file `.env` cho stack
+Step 2: Tạo file `.env` cho stack
 Bạn có thể chạy script `init.sh` để tạo file này và cập nhật các cấu hình cần thiết.
 Hoặc tự tạo thủ công bằng cách sao chép mẫu sau và chỉnh sửa lại giá trị:
 ```
