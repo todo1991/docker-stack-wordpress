@@ -70,7 +70,7 @@ Mặc định init.sh đã thêm cron gia hạn ssl tự động, nếu vi�
 ---
 
 # Hướng dẫn trường hợp đã có mã nguồn và muốn dùng bộ  compose này
-***Thực hiện các bước 1,2   không thực hiện bước 3 nhé!***
+***Thực hiện các bước 1,2   không thực hiện bước 3 nhé!***   
 Đối với database thì cần tải  file .sql lên máy host và chạy  lệnh sau để import db
 ```
 docker compose up mariadb  -d
