@@ -67,6 +67,30 @@ Mặc định init.sh đã thêm cron gia hạn ssl tự động, nếu vi�
 0 2 * * * bash /pathtofile/ssl_renew.sh >/dev/null 2>&1
 ```
 
+---
+
+# Hướng dẫn trường hợp đã có mã nguồn và muốn dùng bộ  compose này
+***Thực hiện các bước 1,2   không thực hiện bước 3 nhé!***
+Đối với database thì cần tải  file .sql lên máy host và chạy  lệnh sau để import db
+```
+docker compose up mariadb  -d
+docker exec -i mariadb bash -c 'mariadb -u "$MARIADB_USER" -p"$MARIADB_PASSWORD" "$MARIADB_DATABASE"' < database.sql
+```
+Đối với mã nguồn 
+```
+docker compose up  wordpress_instance  -d
+docker exec -it wordpress_instance sh -c 'rm -rf /var/www/html/*'
+docker cp ./your_code/. wordpress_instance:/var/www/html/
+docker run --rm todo1991/phpfpm_wordpress_alpine cat /usr/src/wordpress/wp-config-docker.php > wp-config.php
+docker cp wp-config.php wordpress_instance:/var/www/html/wp-config.php && rm -f wp-config.php
+docker exec -it wordpress_instance chown -R www-data:www-data /var/www/html
+```
+Như vậy là đã hoàn tất, có thể  tắt  bật lại compose và kiểm tra hoạt đông
+```
+docker compose down
+docker compose up -d
+```
+
 ## License
 This project is licensed under the [MIT License](LICENSE).
 
