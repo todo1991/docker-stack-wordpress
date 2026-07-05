@@ -14,20 +14,6 @@ x-hardening: &hardening
   security_opt:
     - no-new-privileges:true
 
-# DB settings shared by wordpress_instance and wpcli
-x-wordpress-env: &wordpress-env
-  WORDPRESS_DB_HOST: mariadb
-  WORDPRESS_DB_USER: ${MARIADB_USER}
-  WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
-  WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
-  WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wpstack_}
-
-x-db-depends: &db-depends
-  mariadb:
-    condition: service_healthy
-  redis:
-    condition: service_healthy
-
 # fast checks while starting (start_interval), relaxed once steady
 x-healthcheck-timing: &healthcheck-timing
   interval: 30s
@@ -167,7 +153,11 @@ services:
     restart: unless-stopped
     <<: *hardening
     environment:
-      <<: *wordpress-env
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${MARIADB_USER}
+      WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
+      WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wpstack_}
       WORDPRESS_CONFIG_EXTRA: |
         # define('DISALLOW_FILE_EDIT', true);
         # enable if no plugin need edit file!
@@ -185,7 +175,11 @@ services:
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
-    depends_on: *db-depends
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - wordpressnetworkstack
     healthcheck:
@@ -193,8 +187,9 @@ services:
       test: ["CMD-SHELL", "SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000"]
       <<: *healthcheck-timing
 
-  # helper services: not started by `docker compose up -d`,
-  # use `docker compose run --rm <service>` instead
+  # helper service: not started by `docker compose up -d`,
+  # use `docker compose run --rm certbot ...` instead.
+  # (wp-cli is baked into wordpress_instance: `docker exec -u www-data wordpress_instance wp ...`)
   certbot:
     image: certbot/certbot
     container_name: certbot
@@ -211,28 +206,6 @@ services:
       - type: volume
         source: public_html
         target: /var/www/html
-    networks:
-      - wordpressnetworkstack
-
-  wpcli:
-    image: wordpress:cli
-    container_name: wpcli
-    profiles:
-      - tools
-    init: true
-    <<: *hardening
-    environment:
-      <<: *wordpress-env
-      WORDPRESS_CONFIG_EXTRA: |
-        define('WP_REDIS_HOST', 'redis');
-        define('WP_REDIS_PORT', 6379);
-        define('WP_MEMORY_LIMIT', '256M');
-        define('WP_MAX_MEMORY_LIMIT', '512M');
-    volumes:
-      - type: volume
-        source: public_html
-        target: /var/www/html
-    depends_on: *db-depends
     networks:
       - wordpressnetworkstack
 

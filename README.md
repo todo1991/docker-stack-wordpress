@@ -26,7 +26,7 @@ Step 3: khởi động compose và kiểm tra hoạt động
 ```
 docker compose up -d
 ```
-Lưu ý: hai service tiện ích `certbot` và `wpcli` nằm trong profile `tools` nên sẽ **không** khởi động cùng `docker compose up -d`; chúng chỉ chạy khi được gọi trực tiếp bằng `docker compose run --rm <service>`.
+Lưu ý: service tiện ích `certbot` nằm trong profile `tools` nên sẽ **không** khởi động cùng `docker compose up -d`; nó chỉ chạy khi được gọi trực tiếp bằng `docker compose run --rm certbot ...`. Còn wp-cli được cài sẵn trong container `wordpress_instance`, gọi qua `docker exec` (xem phần dưới).
 
 ## Giải thích các biến trong `.env`
 
@@ -43,9 +43,9 @@ Lưu ý: hai service tiện ích `certbot` và `wpcli` nằm trong profile `tool
 # Cài đặt plugin quản lý cache và redis
 Mặc định thì init.sh đã thêm aliases wp-cli để rút ngắn câu lệnh, nhưng nếu không có thể  chay lệnh sau(chú ý thoát ssh và login lại để load biến môi trường mới hoặc dùng lệnh soucre để áp dụng biến môi trường lập tức)
 ```
-echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >> ~/.bash_aliases
+echo 'alias wpcli="docker exec -ti -u www-data wordpress_instance wp"' >> ~/.bash_aliases
 ```
-Sau đó có thể gọi lệnh wpcli từ thư mục compose gọn gàng
+Sau đó có thể gọi lệnh wpcli từ bất kỳ đâu, chạy tức thì (docker exec vào container đang chạy, không tạo container mới)
 ```
 # các plugin nên cài
 wpcli plugin install redis-cache --activate
@@ -120,7 +120,7 @@ docker exec -i mariadb bash -c 'mariadb -u "$MARIADB_USER" -p"$MARIADB_PASSWORD"
 docker compose up  wordpress_instance  -d
 docker exec -it wordpress_instance sh -c 'rm -rf /var/www/html/*'
 docker cp ./your_code/. wordpress_instance:/var/www/html/
-docker run --rm todo1991/phpfpm_wordpress_alpine cat /usr/src/wordpress/wp-config-docker.php > wp-config.php
+docker run --rm ghcr.io/todo1991/phpfpm_wordpress_alpine cat /usr/src/wordpress/wp-config-docker.php > wp-config.php
 docker cp wp-config.php wordpress_instance:/var/www/html/wp-config.php && rm -f wp-config.php
 docker exec -it wordpress_instance chown -R www-data:www-data /var/www/html
 ```

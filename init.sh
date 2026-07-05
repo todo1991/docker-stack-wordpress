@@ -158,16 +158,18 @@ fi
 sed "s|__LOGDIR__|$SCRIPT_DIR/logs|" conf/logrotate/nginx-docker > /etc/logrotate.d/nginx-docker
 echo "Logrotate config installed to /etc/logrotate.d/nginx-docker."
 
-# WP cron runs from here instead of on page views (DISABLE_WP_CRON is set)
-WPCRON_CMD="cd $SCRIPT_DIR && /usr/bin/docker compose run --rm --no-deps --quiet-pull wpcli cron event run --due-now"
+# WP cron runs from here instead of on page views (DISABLE_WP_CRON is set);
+# exec into the running container - no throwaway container every 5 minutes
+WPCRON_CMD="/usr/bin/docker exec -u www-data wordpress_instance wp cron event run --due-now"
 if ! crontab -l 2>/dev/null | grep -qF "cron event run"; then
     (crontab -l 2>/dev/null; echo "*/5 * * * * $WPCRON_CMD >/dev/null 2>&1") | crontab -
     echo "Cron job added to run WordPress cron every 5 minutes."
 fi
 
-# wp-cli alias (only once)
+# wp-cli alias (only once): exec into the running php-fpm container,
+# instant instead of creating a throwaway container per command
 if ! grep -qs 'alias wpcli=' ~/.bash_aliases; then
-    echo 'alias wpcli="docker compose run -ti --rm --no-deps --quiet-pull wpcli"' >> ~/.bash_aliases
+    echo 'alias wpcli="docker exec -ti -u www-data wordpress_instance wp"' >> ~/.bash_aliases
     echo "Added wpcli alias to ~/.bash_aliases (re-login or 'source ~/.bash_aliases' to use it)."
 fi
 

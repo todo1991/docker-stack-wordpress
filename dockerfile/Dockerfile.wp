@@ -8,6 +8,14 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
 # fcgi provides cgi-fcgi, used by the container healthcheck to hit php-fpm's ping endpoint
 RUN apk add --no-cache fcgi
 
+# wp-cli baked in: run commands with `docker exec -u www-data wordpress_instance wp ...`
+# instead of spinning up a throwaway container each time
+ADD https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar /usr/local/bin/wp
+# ADD from a URL creates the file 600/root; www-data needs read access too
+RUN chmod 755 /usr/local/bin/wp
+# www-data has no writable home; keep wp-cli's cache out of the way
+ENV WP_CLI_CACHE_DIR=/tmp/.wp-cli/cache
+
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
 	&& sed -i  's/memory_limit\s*=.*/memory_limit=512M/g' /usr/local/etc/php/php.ini \
 	&& sed -i  's/upload_max_filesize\s*=.*/upload_max_filesize=128M/g' /usr/local/etc/php/php.ini \
