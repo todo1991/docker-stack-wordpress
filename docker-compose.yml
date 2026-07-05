@@ -74,6 +74,8 @@ services:
     ports:
       - 80:80
       - 443:443
+      # QUIC / HTTP-3
+      - 443:443/udp
     tmpfs:
       - /run/nginx-cache
     volumes:
