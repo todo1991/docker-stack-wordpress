@@ -1,5 +1,5 @@
 ARG NGINX_FROM_IMAGE=nginx:mainline-alpine
-FROM ${NGINX_FROM_IMAGE} as builder
+FROM ${NGINX_FROM_IMAGE} AS builder
 
 ARG ENABLED_MODULES
 
@@ -14,12 +14,13 @@ COPY ./ /modules/
 RUN set -ex \
     && apk update \
     && apk add linux-headers openssl-dev pcre2-dev zlib-dev openssl abuild \
-               musl-dev libxslt libxml2-utils make mercurial gcc unzip git \
+               musl-dev libxslt libxml2-utils make gcc unzip git \
                xz g++ coreutils \
     # allow abuild as a root user \
     && printf "#!/bin/sh\\nSETFATTR=true /usr/bin/abuild -F \"\$@\"\\n" > /usr/local/bin/abuild \
     && chmod +x /usr/local/bin/abuild \
-    && hg clone -r ${NGINX_VERSION}-${PKG_RELEASE} https://hg.nginx.org/pkg-oss/ \
+    # hg.nginx.org was decommissioned; pkg-oss now lives on GitHub
+    && git clone -b ${NGINX_VERSION}-${PKG_RELEASE} https://github.com/nginx/pkg-oss/ \
     && cd pkg-oss \
     && mkdir /tmp/packages \
     && for module in $ENABLED_MODULES; do \
@@ -61,11 +62,50 @@ RUN set -ex \
     done \
     && echo "BUILT_MODULES=\"$BUILT_MODULES\"" > /tmp/packages/modules.env
 
+# ModSecurity was removed from nginx's pkg-oss packaging (F5 EOL'd the
+# module), so build libmodsecurity and the OWASP nginx connector from source.
+FROM ${NGINX_FROM_IMAGE} AS modsec-builder
+
+ARG MODSECURITY_VERSION=3.0.16
+ARG MODSECURITY_NGINX_VERSION=1.0.4
+
+RUN set -ex \
+    && apk add --no-cache gcc g++ make automake autoconf libtool pkgconf git curl \
+               linux-headers pcre2-dev zlib-dev libxml2-dev yajl-dev curl-dev \
+               lmdb-dev libmaxminddb-dev \
+    && git clone --depth 1 -b v${MODSECURITY_VERSION} --recurse-submodules --shallow-submodules \
+         https://github.com/owasp-modsecurity/ModSecurity /ModSecurity \
+    && cd /ModSecurity \
+    && ./build.sh \
+    && ./configure --with-pcre2 \
+    && make -j"$(nproc)" \
+    && make install
+
+RUN set -ex \
+    && curl -fsSL https://github.com/owasp-modsecurity/ModSecurity-nginx/archive/refs/tags/v${MODSECURITY_NGINX_VERSION}.tar.gz | tar xz -C / \
+    && curl -fsSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar xz -C / \
+    && cd /nginx-${NGINX_VERSION} \
+    && ./configure --with-compat --add-dynamic-module=/ModSecurity-nginx-${MODSECURITY_NGINX_VERSION} \
+    && make modules \
+    && cp objs/ngx_http_modsecurity_module.so /ngx_http_modsecurity_module.so
+
 FROM ${NGINX_FROM_IMAGE}
 COPY --from=builder /tmp/packages /tmp/packages
+COPY --from=modsec-builder /usr/local/modsecurity/lib/libmodsecurity.so.* /usr/lib/
+COPY --from=modsec-builder /ngx_http_modsecurity_module.so /usr/lib/nginx/modules/ngx_http_modsecurity_module.so
 RUN set -ex \
-    && . /tmp/packages/modules.env \
-    && for module in $BUILT_MODULES; do \
-           apk add --no-cache --allow-untrusted /tmp/packages/nginx-module-${module}-${NGINX_VERSION}*.apk; \
+    # runtime libraries needed by libmodsecurity
+    && apk add --no-cache libxml2 yajl libcurl lmdb libmaxminddb-libs libstdc++ pcre2 \
+    # install every built module package (matching on BUILT_MODULES is unreliable:
+    # build_module.sh sanitizes package names differently than the build loop does)
+    && for pkg in /tmp/packages/nginx-module-*.apk; do \
+           case "$pkg" in *-dbg-*) continue ;; esac; \
+           apk add --no-cache --allow-untrusted "$pkg"; \
        done \
-    && rm -rf /tmp/packages
+    && rm -rf /tmp/packages \
+    # fail the build if any module referenced by nginx.conf is missing
+    && for so in ngx_http_cache_purge_module.so ngx_http_testcookie_access_module.so \
+                 ngx_http_brotli_filter_module.so ngx_http_brotli_static_module.so \
+                 ngx_http_modsecurity_module.so; do \
+           test -f "/usr/lib/nginx/modules/$so" || { echo "missing $so"; exit 1; }; \
+       done
