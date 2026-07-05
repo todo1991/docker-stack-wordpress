@@ -159,4 +159,8 @@ server {
 	include conf.d/addoption/options-static-cache.conf;
 	include conf.d/addoption/options-zip.conf;
 	include conf.d/addoption/cloudflare.conf;
+
+	# per-host overrides (gitignored): drop extra .conf files into
+	# conf/nginx/conf.d/local/ - they survive updates from the repo
+	include conf.d/local/*.conf;
 }

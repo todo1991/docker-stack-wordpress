@@ -126,15 +126,14 @@ if [ ! -d conf/nginx/modsec/coreruleset ]; then
     cp conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 fi
 
-# create the site config from the template (skip if already created)
-if [ -e conf/nginx/conf.d/example.com.conf ] && [ ! -e "conf/nginx/conf.d/${DOMAIN}.conf" ]; then
-    sed -i "s/example.com/$DOMAIN/g" conf/nginx/conf.d/example.com.conf
-    mv conf/nginx/conf.d/example.com.conf "conf/nginx/conf.d/${DOMAIN}.conf"
-fi
+# render the site config from the tracked template (conf.d only holds
+# rendered/untracked files, so git updates never fight with it)
+sed "s/example.com/$DOMAIN/g" conf/nginx/site.conf.template > "conf/nginx/conf.d/${DOMAIN}.conf"
 
-# replace the publicly-known placeholder testcookie secret with a random one
-if grep -q "keepmesecretkeepmesecretkeepmesecret" conf/nginx/conf.d/addoption/options-testcookie.conf; then
-    sed -i "s/keepmesecretkeepmesecretkeepmesecret/$(openssl rand -hex 24)/" conf/nginx/conf.d/addoption/options-testcookie.conf
+# generate a per-host testcookie secret (kept out of git so updates
+# never overwrite it and the secret is never public)
+if [ ! -e conf/nginx/conf.d/local/00-testcookie-secret.conf ]; then
+    printf 'testcookie_secret %s;\n' "$(openssl rand -hex 24)" > conf/nginx/conf.d/local/00-testcookie-secret.conf
 fi
 
 # ssl renew helper: renew via webroot, then reload (not restart) nginx so

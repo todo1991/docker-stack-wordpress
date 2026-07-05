@@ -1,0 +1,39 @@
+# Per-VM compose overrides.
+#
+# Copy this file to docker-compose.override.yml (gitignored) and keep only
+# what this machine needs - docker compose merges it automatically on top
+# of docker-compose.yml, and git pull / update.sh never touch it.
+#
+# Same idea for the other layers:
+#   - MariaDB:  conf/mariadb/zz-local.cnf        (overrides mariadbcustom.cnf)
+#   - nginx:    conf/nginx/conf.d/local/*.conf   (included in the server block)
+
+services: {}
+
+# --- examples -----------------------------------------------------------
+#
+# services:
+#
+#   # small host: cap memory and shrink the DB buffer pool via zz-local.cnf
+#   mariadb:
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 1500M
+#
+#   # behind a load balancer / reverse proxy on non-standard ports
+#   nginx:
+#     ports: !override
+#       - 8080:80
+#       - 8443:443
+#       - 8443:443/udp
+#
+#   # extra PHP tuning for this machine only
+#   wordpress_instance:
+#     environment:
+#       WORDPRESS_CONFIG_EXTRA: |
+#         define('WP_REDIS_HOST', 'redis');
+#         define('WP_REDIS_PORT', 6379);
+#         define('WP_MEMORY_LIMIT', '512M');
+#         define('WP_MAX_MEMORY_LIMIT', '1024M');
+#         define('DISABLE_WP_CRON', true);

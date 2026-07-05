@@ -1,3 +1,12 @@
 coreruleset
 .env
 *.log
+
+# rendered per-site config (created by init.sh/update.sh from
+# conf/nginx/site.conf.template)
+conf/nginx/conf.d/*.conf
+
+# per-VM customizations - survive git pull / update.sh
+docker-compose.override.yml
+conf/mariadb/zz-*.cnf
+conf/nginx/conf.d/local/*.conf

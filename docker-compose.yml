@@ -33,9 +33,11 @@ services:
       - type: volume
         source: mariadb
         target: /var/lib/mysql
+      # whole directory so per-host overrides (zz-*.cnf, gitignored) load
+      # after mariadbcustom.cnf and can override any default
       - type: bind
-        source: ./conf/mariadb/mariadbcustom.cnf
-        target: /etc/mysql/conf.d/mariadbcustom.cnf
+        source: ./conf/mariadb
+        target: /etc/mysql/conf.d
         read_only: true
     networks:
       - wordpressnetworkstack
@@ -76,7 +78,8 @@ services:
         # modsecurity is built from OWASP sources in its own stage (no longer in pkg-oss)
         ENABLED_MODULES: >
           testcookie-nginx-module ngx_cache_purge brotli
-    image: todo1991/nginx_wordpress_alpine
+    # prebuilt by CI; set UPDATE_BUILD=1 in update.sh to build locally instead
+    image: ghcr.io/todo1991/nginx_wordpress_alpine
     container_name: nginx
     restart: unless-stopped
     security_opt:
@@ -136,7 +139,7 @@ services:
       dockerfile: Dockerfile.wp
       args:
         DOMAIN: ${DOMAIN}
-    image: todo1991/phpfpm_wordpress_alpine
+    image: ghcr.io/todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
     security_opt:

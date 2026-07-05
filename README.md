@@ -78,6 +78,36 @@ init.sh đã cài cấu hình logrotate tại `/etc/logrotate.d/nginx-docker` đ
 
 ---
 
+# Cập nhật stack khi repo có phiên bản mới
+Chạy script có sẵn:
+```
+./update.sh                 # pull image dựng sẵn từ GHCR (nhanh, khuyến nghị)
+UPDATE_BUILD=1 ./update.sh  # hoặc build image ngay trên máy
+```
+Script sẽ: `git pull` → render lại file cấu hình site từ template (`conf/nginx/site.conf.template` → `conf.d/<domain>.conf`) → pull/build image → `docker compose up -d` (chỉ recreate container có thay đổi) → dọn image cũ.
+
+Image được CI build và push lên `ghcr.io/todo1991/*` **chỉ khi** đã qua đủ lint + build + `nginx -t`. Lần đầu dùng cần vào GitHub → Packages → đặt visibility của 2 package thành **Public** (hoặc `docker login ghcr.io` trên VM bằng PAT có quyền `read:packages`).
+
+# Tuỳ chỉnh riêng cho từng máy (không bị ghi đè khi update)
+Mọi tuỳ chỉnh per-VM đặt ở các file **ngoài git** — `git pull`/`update.sh` không bao giờ đụng tới:
+
+| Lớp | File trên máy | Cơ chế |
+|---|---|---|
+| Compose (port, RAM, env...) | `docker-compose.override.yml` | Docker Compose tự merge đè — xem mẫu `docker-compose.override.yml.example` |
+| MariaDB | `conf/mariadb/zz-local.cnf` | Load sau `mariadbcustom.cnf` theo alphabet, giá trị sau đè giá trị trước |
+| Nginx (trong server block) | `conf/nginx/conf.d/local/*.conf` | Template include `conf.d/local/*.conf` ở cuối server block |
+| Nginx (mức http) | `conf/nginx/conf.d/*.conf` | `nginx.conf` include sẵn toàn bộ thư mục |
+| Secret testcookie | `conf/nginx/conf.d/local/00-testcookie-secret.conf` | init.sh tự sinh, mỗi máy một secret riêng |
+
+Ví dụ giảm buffer pool cho máy ít RAM — tạo `conf/mariadb/zz-local.cnf`:
+```ini
+[mariadb]
+innodb_buffer_pool_size=512M
+```
+rồi `docker compose up -d` (mariadb sẽ tự recreate).
+
+---
+
 # Hướng dẫn trường hợp đã có mã nguồn và muốn dùng bộ  compose này
 ***Thực hiện các bước 1,2   không thực hiện bước 3 nhé!***   
 Đối với database thì cần tải  file .sql lên máy host và chạy  lệnh sau để import db
