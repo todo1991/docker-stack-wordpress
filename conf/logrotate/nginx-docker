@@ -1,0 +1,14 @@
+# Rotate nginx logs written to the bind-mounted logs/ directory.
+# Installed to /etc/logrotate.d/ by init.sh (which replaces __LOGDIR__).
+__LOGDIR__/*.log {
+    daily
+    rotate 14
+    missingok
+    notifempty
+    compress
+    delaycompress
+    sharedscripts
+    postrotate
+        /usr/bin/docker kill --signal=USR1 nginx >/dev/null 2>&1 || true
+    endscript
+}
