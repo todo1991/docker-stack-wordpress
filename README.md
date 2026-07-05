@@ -62,6 +62,19 @@ wpcli plugin install nginx-helper --activate
 wpcli option update rt_wp_nginx_helper_options '{"enable_purge":1,"cache_method":"enable_fastcgi","purge_method":"get_request","purge_homepage_on_edit":1,"purge_homepage_on_del":1,"purge_archive_on_edit":1,"purge_archive_on_del":1,"purge_archive_on_new_comment":0,"purge_archive_on_deleted_comment":0,"purge_page_on_mod":1,"purge_page_on_new_comment":1,"purge_page_on_deleted_comment":1,"enable_map":0,"enable_log":0,"enable_stamp":0,"purge_url":"","redis_hostname":"127.0.0.1","redis_port":"6379","redis_prefix":"nginx-cache:"}' --format=json
 ```
 
+# Purge cache trang (fastcgi cache)
+Bốn cách, từ tự động đến thủ công:
+1. **Tự động** — nginx-helper purge ngay khi có thay đổi nội dung (sửa/đăng/xoá bài, bình luận mới). Đã cấu hình ở phần cài plugin phía trên, không cần làm gì thêm.
+2. **Từ trang admin** — nginx-helper thêm nút **Purge Cache** trên thanh admin bar của WordPress (purge toàn bộ).
+3. **Purge 1 URL từ terminal** — endpoint `/purge/` chỉ mở cho mạng nội bộ nên gọi qua container:
+```
+docker exec wordpress_instance curl -sk "https://<domain>/purge/<duong-dan-trang>/"
+```
+4. **Purge toàn bộ từ terminal** — xoá thẳng file cache trong tmpfs, hiệu lực tức thì, không cần reload nginx:
+```
+docker exec nginx find /run/nginx-cache -type f -delete
+```
+
 # Hướng dẫn backup database của webiste
 ```
 source .env && docker compose  exec mariadb mariadb-dump --databases ${MARIADB_DATABASE} -u${MARIADB_USER} -p${MARIADB_PASSWORD} > mariadb-dump-$(date +%F_%H-%M-%S).sql
