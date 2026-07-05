@@ -135,13 +135,14 @@ server {
 
 		# Restricts the number of concurrent attempts to populate the cache
 		fastcgi_cache_lock on;
-		# MICROCACHE - 1s is intentional, do not raise it blindly: pages
-		# with view counters need PHP on (nearly) every request, and 1s
-		# still absorbs traffic bursts because concurrent requests share
-		# one render (cache_lock + use_stale updating + background_update).
-		# Raise it only if no page counts visits, and then install the
-		# nginx-helper plugin so content changes purge the cache.
-		fastcgi_cache_valid 200 301 302 1s;
+		# Page cache TTL - works together with the purge module + the
+		# nginx-helper plugin (see README), which purges entries as soon
+		# as content changes.
+		# IMPORTANT: view counting must run in AJAX mode (Newspaper:
+		# tds_ajax_post_view_count = enabled), otherwise cached pages
+		# don't count visits - with PHP-side counting, drop this back
+		# to a 1s microcache instead.
+		fastcgi_cache_valid 200 301 302 30m;
 		fastcgi_cache_use_stale error timeout updating invalid_header http_500 http_503;
 		fastcgi_cache_background_update on;
 
@@ -157,6 +158,15 @@ server {
         }
 
 	location ~ /purge(/.*) {
+		# only nginx-helper (running in the wordpress container) may purge;
+		# public purge access would let anyone flush the cache at will
+		allow 127.0.0.1;
+		allow ::1;
+		allow 10.0.0.0/8;
+		allow 172.16.0.0/12;
+		allow 192.168.0.0/16;
+		allow fc00::/7;
+		deny all;
 		fastcgi_cache_purge WORDPRESS "$scheme$request_method$host$1";
 	}
 

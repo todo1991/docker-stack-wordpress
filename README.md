@@ -52,11 +52,14 @@ wpcli plugin install redis-cache --activate
 wpcli plugin install flying-fonts --activate
 wpcli plugin install flying-scripts --activate
 wpcli plugin install flying-pages --activate
-# Mặc định nginx dùng MICROCACHE 1 giây (fastcgi_cache_valid 1s) để các chức
-# năng động như đếm lượt truy cập vẫn hoạt động mà vẫn chịu được traffic dồn dập.
-# Nếu site KHÔNG đếm view, có thể tăng thời gian cache trong
-# conf/nginx/site.conf.template — khi đó nên cài nginx-helper để purge tự động:
+# QUAN TRỌNG với theme có đếm view (ví dụ Newspaper): phải bật chế độ đếm qua
+# AJAX để số view vẫn tăng khi trang nằm trong cache 30 phút:
+wpcli eval 'td_util::update_option("tds_ajax_post_view_count", "enabled");'
+# BẮT BUỘC cài nginx-helper: nginx cache trang 30 phút (fastcgi_cache_valid 30m),
+# plugin này sẽ purge cache tự động ngay khi nội dung thay đổi:
 wpcli plugin install nginx-helper --activate
+# Bật purge trong nginx-helper (mặc định plugin tắt purge):
+wpcli option update rt_wp_nginx_helper_options '{"enable_purge":1,"cache_method":"enable_fastcgi","purge_method":"get_request","purge_homepage_on_edit":1,"purge_homepage_on_del":1,"purge_archive_on_edit":1,"purge_archive_on_del":1,"purge_archive_on_new_comment":0,"purge_archive_on_deleted_comment":0,"purge_page_on_mod":1,"purge_page_on_new_comment":1,"purge_page_on_deleted_comment":1,"enable_map":0,"enable_log":0,"enable_stamp":0,"purge_url":"","redis_hostname":"127.0.0.1","redis_port":"6379","redis_prefix":"nginx-cache:"}' --format=json
 ```
 
 # Hướng dẫn backup database của webiste
