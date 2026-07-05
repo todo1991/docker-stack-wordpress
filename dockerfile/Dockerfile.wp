@@ -5,8 +5,9 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions redis
 
-# fcgi provides cgi-fcgi, used by the container healthcheck to hit php-fpm's ping endpoint
-RUN apk add --no-cache fcgi
+# fcgi: cgi-fcgi for the container healthcheck to hit php-fpm's ping endpoint
+# mariadb-client: mysql/mysqlcheck/mysqldump binaries used by `wp db ...`
+RUN apk add --no-cache fcgi mariadb-client
 
 # wp-cli baked in: run commands with `docker exec -u www-data wordpress_instance wp ...`
 # instead of spinning up a throwaway container each time
@@ -15,6 +16,21 @@ ADD https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.pha
 RUN chmod 755 /usr/local/bin/wp
 # www-data has no writable home; keep wp-cli's cache out of the way
 ENV WP_CLI_CACHE_DIR=/tmp/.wp-cli/cache
+
+# mariadb-client 11.4+ requires TLS by default but the in-network DB
+# doesn't use it; default skip-ssl for the `wp db` subcommands that
+# shell out to the client binaries
+ENV WP_CLI_CONFIG_PATH=/etc/wp-cli/config.yml
+RUN mkdir -p /etc/wp-cli && printf '%s\n' \
+    'db check:'    '  skip-ssl: true' \
+    'db optimize:' '  skip-ssl: true' \
+    'db repair:'   '  skip-ssl: true' \
+    'db query:'    '  skip-ssl: true' \
+    'db cli:'      '  skip-ssl: true' \
+    'db export:'   '  skip-ssl: true' \
+    'db import:'   '  skip-ssl: true' \
+    'db search:'   '  skip-ssl: true' \
+    > /etc/wp-cli/config.yml
 
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
 	&& sed -i  's/memory_limit\s*=.*/memory_limit=512M/g' /usr/local/etc/php/php.ini \
@@ -34,7 +50,6 @@ echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache-recommended.
 echo "opcache.use_cwd=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 echo "expose_php = off" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
-echo "disable_functions = curl_multi_exec, dbase_open, dbmopen, dl, eval, exec, fopen_with_path, fpassthru, highlight_file, passthru, pcntl_alarm, pcntl_exec, pcntl_fork, pcntl_get_last_error, pcntl_getpriority, pcntl_setpriority, pcntl_signal, pcntl_signal_dispatch, pcntl_sigprocmask, pcntl_sigtimedwait, pcntl_sigwaitinfo, pcntl_strerror, pcntl_wait, pcntl_waitpid, pcntl_wexitstatus, pcntl_wifcontinued, pcntl_wifexited, pcntl_wifsignaled, pcntl_wifstopped, pcntl_wstopsig, pcntl_wtermsig, popen, posix_getpwuid, posix_kill, posix_mkfifo, posix_setegid, posix_seteuid, posix_setgid, posix_setpgid, posix_setsid, posix_setuid, posix_uname, proc_close, proc_open, shell_exec, show_source, system" >> /usr/local/etc/php/conf.d/opcache-recommended.ini
 EOF
 
 ARG DOMAIN
@@ -48,4 +63,8 @@ sed -i "s/^pm.min_spare_servers\s*=.*/pm.min_spare_servers = 5/" /usr/local/etc/
 sed -i "s/^pm.max_spare_servers\s*=.*/pm.max_spare_servers = 15/" /usr/local/etc/php-fpm.d/www.conf
 # ping endpoint for the container healthcheck (appended to the pool section)
 echo "ping.path = /ping" >> /usr/local/etc/php-fpm.d/zz-docker.conf
+# dangerous functions are disabled for php-fpm (web) ONLY, as a pool
+# admin value: the CLI (wp-cli via docker exec) needs proc_open for
+# commands like `wp db check` and is not reachable from the web
+echo "php_admin_value[disable_functions] = curl_multi_exec, dbase_open, dbmopen, dl, exec, fopen_with_path, fpassthru, highlight_file, passthru, pcntl_alarm, pcntl_exec, pcntl_fork, pcntl_get_last_error, pcntl_getpriority, pcntl_setpriority, pcntl_signal, pcntl_signal_dispatch, pcntl_sigprocmask, pcntl_sigtimedwait, pcntl_sigwaitinfo, pcntl_strerror, pcntl_wait, pcntl_waitpid, pcntl_wexitstatus, pcntl_wifcontinued, pcntl_wifexited, pcntl_wifsignaled, pcntl_wifstopped, pcntl_wstopsig, pcntl_wtermsig, popen, posix_getpwuid, posix_kill, posix_mkfifo, posix_setegid, posix_seteuid, posix_setgid, posix_setpgid, posix_setsid, posix_setuid, posix_uname, proc_close, proc_open, shell_exec, show_source, system" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 EOF
