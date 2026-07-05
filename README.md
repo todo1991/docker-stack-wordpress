@@ -138,26 +138,34 @@ rồi `docker compose up -d` (mariadb sẽ tự recreate).
 
 ---
 
-# Hướng dẫn trường hợp đã có mã nguồn và muốn dùng bộ  compose này
-***Thực hiện các bước 1,2   không thực hiện bước 3 nhé!***   
-Đối với database thì cần tải  file .sql lên máy host và chạy  lệnh sau để import db
+# Hướng dẫn trường hợp đã có mã nguồn và muốn dùng bộ compose này
+***Thực hiện các bước 1, 2 như site mới, KHÔNG thực hiện bước 3.***
+
+**Quan trọng nhất — trước khi tiếp tục, sửa `.env`:** đặt `WORDPRESS_TABLE_PREFIX` đúng với tiền tố bảng trong file dump của bạn (site cũ thường là `wp_`). Sai bước này WordPress sẽ không thấy dữ liệu và hiện màn hình cài đặt mới.
+
+Sau đó đưa dữ liệu cũ về định dạng backup chuẩn rồi dùng `restore.sh` (cùng công cụ với backup/restore thường ngày — có safety dump, tự flush Redis và purge cache):
 ```
-docker compose up mariadb  -d
-docker exec -i mariadb bash -c 'mariadb -u "$MARIADB_USER" -p"$MARIADB_PASSWORD" "$MARIADB_DATABASE"' < database.sql
-```
-Đối với mã nguồn 
-```
-docker compose up  wordpress_instance  -d
-docker exec -it wordpress_instance sh -c 'rm -rf /var/www/html/*'
-docker cp ./your_code/. wordpress_instance:/var/www/html/
-docker run --rm ghcr.io/todo1991/phpfpm_wordpress_alpine cat /usr/src/wordpress/wp-config-docker.php > wp-config.php
-docker cp wp-config.php wordpress_instance:/var/www/html/wp-config.php && rm -f wp-config.php
-docker exec -it wordpress_instance chown -R www-data:www-data /var/www/html
-```
-Như vậy là đã hoàn tất, có thể  tắt  bật lại compose và kiểm tra hoạt động
-```
-docker compose down
+# loại wp-config.php cũ (mang credentials của server cũ);
+# container sẽ tự sinh bản mới từ .env
+rm -f your_code/wp-config.php
+
+mkdir -p backups
+gzip -c database.sql > backups/db-migrate.sql.gz
+tar czf backups/html-migrate.tar.gz -C ./your_code .
+
+# restore cả hai (db cần mariadb đang chạy)
+docker compose up -d mariadb
+./restore.sh backups/db-migrate.sql.gz backups/html-migrate.tar.gz
+
+# khởi động toàn bộ và kiểm tra
 docker compose up -d
+```
+
+Nếu domain mới **khác** domain cũ — bắt buộc thay URL trong database, nếu không site sẽ redirect về domain cũ:
+```
+wpcli search-replace 'https://domain-cu.com' 'https://domain-moi.com' --all-tables
+wpcli cache flush
+wpcli option get siteurl   # phải ra domain mới
 ```
 
 ## License

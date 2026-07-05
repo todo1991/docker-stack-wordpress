@@ -71,6 +71,17 @@ for f in "$@"; do
             docker run --rm -v public_html:/data -v "$dir:/backup:ro" alpine \
                 sh -c "find /data -mindepth 1 -delete && tar xzf /backup/$base -C /data && chown -R 82:82 /data"
             purge_page_cache
+            # a migrated code tree should not carry the old server's
+            # wp-config.php; the wordpress image regenerates it from .env
+            # on container start
+            if ! docker run --rm -v public_html:/data:ro alpine test -e /data/wp-config.php; then
+                if docker ps --format '{{.Names}}' | grep -q '^wordpress_instance$'; then
+                    echo "    wp-config.php missing - restarting wordpress_instance to regenerate it from .env"
+                    docker compose restart wordpress_instance
+                else
+                    echo "    wp-config.php missing - it will be generated from .env on 'docker compose up -d'"
+                fi
+            fi
             echo "    website files restored."
             ;;
         config-*.tar.gz)
