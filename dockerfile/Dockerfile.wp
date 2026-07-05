@@ -5,8 +5,11 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions redis
 
+# fcgi provides cgi-fcgi, used by the container healthcheck to hit php-fpm's ping endpoint
+RUN apk add --no-cache fcgi
+
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
-	&& sed -i  's/memory_limit\s*=.*/memory_limit=1024M/g' /usr/local/etc/php/php.ini \
+	&& sed -i  's/memory_limit\s*=.*/memory_limit=512M/g' /usr/local/etc/php/php.ini \
 	&& sed -i  's/upload_max_filesize\s*=.*/upload_max_filesize=128M/g' /usr/local/etc/php/php.ini \
 	&& sed -i  's/post_max_size\s*=.*/post_max_size=256M/g' /usr/local/etc/php/php.ini \
 	&& sed -i  's/max_execution_time\s*=.*/max_execution_time=300/g' /usr/local/etc/php/php.ini \
@@ -35,4 +38,6 @@ sed -i "s/^pm.max_children\s*=.*/pm.max_children = 15/" /usr/local/etc/php-fpm.d
 sed -i "s/^pm.start_servers\s*=.*/pm.start_servers = 10/" /usr/local/etc/php-fpm.d/www.conf
 sed -i "s/^pm.min_spare_servers\s*=.*/pm.min_spare_servers = 5/" /usr/local/etc/php-fpm.d/www.conf
 sed -i "s/^pm.max_spare_servers\s*=.*/pm.max_spare_servers = 15/" /usr/local/etc/php-fpm.d/www.conf
+# ping endpoint for the container healthcheck (appended to the pool section)
+echo "ping.path = /ping" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 EOF

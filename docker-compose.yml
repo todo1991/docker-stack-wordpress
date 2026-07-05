@@ -1,17 +1,28 @@
 ---
+# cap json-file logs so container stdout/stderr can't fill the disk
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
 
   mariadb:
-    image: mariadb:10.11.7-jammy
+    # 10.11 is an LTS line; track the latest patch release instead of pinning one
+    image: mariadb:10.11
     container_name: mariadb
     restart: unless-stopped
     env_file:
       - .env
+    logging: *default-logging
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -uroot -p$MARIADB_ROOT_PASSWORD -h localhost"]
+      # official healthcheck script shipped with the mariadb image
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     expose:
       - 3306
     volumes:
@@ -26,9 +37,10 @@ services:
       - wordpressnetworkstack
 
   redis:
-    image: redis:alpine
+    image: redis:7-alpine
     container_name: redis
     restart: unless-stopped
+    logging: *default-logging
     expose:
       - 6379
     command:
@@ -52,12 +64,13 @@ services:
       context: ./dockerfile
       dockerfile: Dockerfile.alpine
       args:
+        # modsecurity is built from OWASP sources in its own stage (no longer in pkg-oss)
         ENABLED_MODULES: >
-          testcookie-nginx-module ngx_cache_purge
-          modsecurity brotli
+          testcookie-nginx-module ngx_cache_purge brotli
     image: todo1991/nginx_wordpress_alpine
     container_name: nginx
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - 80:80
       - 443:443
@@ -88,12 +101,13 @@ services:
         source: public_html
         target: /var/www/html
     depends_on:
-      - wordpress_instance
-      - certbot
+      wordpress_instance:
+        condition: service_healthy
     networks:
       - wordpressnetworkstack
     healthcheck:
-      test: ["CMD-SHELL", "pgrep nginx >/dev/null 2>&1"]
+      # stub_status is exposed on port 80 for 127.0.0.1 only (see the site config)
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/nginx_status"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -107,21 +121,20 @@ services:
     image: todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
-    env_file:
-      - .env
+    logging: *default-logging
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_USER: ${MARIADB_USER}
       WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
       WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
-      WORDPRESS_TABLE_PREFIX: wpstack_
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wpstack_}
       WORDPRESS_CONFIG_EXTRA: |
         # define('DISALLOW_FILE_EDIT', true);
         # enable if no plugin need edit file!
         define('WP_REDIS_HOST', 'redis');
         define('WP_REDIS_PORT', 6379);
-        define('WP_MEMORY_LIMIT', '512M');
-        define('WP_MAX_MEMORY_LIMIT', '1024M');
+        define('WP_MEMORY_LIMIT', '256M');
+        define('WP_MAX_MEMORY_LIMIT', '512M');
     # fix REST-API on Site Health Check wordpress
     extra_hosts:
       - ${DOMAIN}:${IPHOST}
@@ -134,19 +147,28 @@ services:
         target: /etc/localtime
         read_only: true
     depends_on:
-      - mariadb
-      - redis
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - wordpressnetworkstack
     healthcheck:
-      test: ["CMD-SHELL", "pgrep php-fpm >/dev/null 2>&1"]
+      # hit php-fpm's ping endpoint through FastCGI instead of just checking the process
+      test: ["CMD-SHELL", "SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
+  # helper services: not started by `docker compose up -d`,
+  # use `docker compose run --rm <service>` instead
   certbot:
     image: certbot/certbot
     container_name: certbot
+    profiles:
+      - tools
+    logging: *default-logging
     dns:
       - 8.8.8.8
     volumes:
@@ -162,25 +184,29 @@ services:
   wpcli:
     image: wordpress:cli
     container_name: wpcli
-    env_file:
-      - .env
+    profiles:
+      - tools
+    logging: *default-logging
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_USER: ${MARIADB_USER}
       WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
       WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wpstack_}
       WORDPRESS_CONFIG_EXTRA: |
         define('WP_REDIS_HOST', 'redis');
         define('WP_REDIS_PORT', 6379);
-        define('WP_MEMORY_LIMIT', '512M');
-        define('WP_MAX_MEMORY_LIMIT', '1024M');
+        define('WP_MEMORY_LIMIT', '256M');
+        define('WP_MAX_MEMORY_LIMIT', '512M');
     volumes:
       - type: volume
         source: public_html
         target: /var/www/html
     depends_on:
-      - mariadb
-      - redis
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - wordpressnetworkstack
 
