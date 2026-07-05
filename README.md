@@ -77,15 +77,25 @@ docker exec nginx find /run/nginx-cache -type f -delete
 ```
 Cache nằm trên tmpfs (RAM) nên restart container nginx (ví dụ sau mỗi lần `update.sh` recreate) cũng đồng nghĩa purge toàn bộ.
 
-# Hướng dẫn backup database của webiste
-```
-source .env && docker compose  exec mariadb mariadb-dump --databases ${MARIADB_DATABASE} -u${MARIADB_USER} -p${MARIADB_PASSWORD} > mariadb-dump-$(date +%F_%H-%M-%S).sql
-```
+# Backup & Restore
+Backup tự động đã được init.sh thêm vào cron: **01:30 hằng ngày** (database + config per-VM) và **03:00 Chủ nhật** (`full`: thêm mã nguồn/uploads + chứng chỉ SSL). File lưu tại `backups/` (gitignored), tự xoá bản cũ (mặc định giữ 7 ngày với db/config, 28 ngày với html/ssl — đổi qua biến `BACKUP_KEEP_DAYS`, `BACKUP_KEEP_DAYS_FULL`).
 
-# Hướng dẫn backup mã nguồn của website
+Chạy tay khi cần (ví dụ trước khi update lớn):
 ```
-docker run --rm --volumes-from wordpress_instance -v $(pwd):/backup alpine tar cvf /backup/backupcode-$(date +%F_%H-%M-%S).tar /var/www/html
+./backup.sh        # database + config
+./backup.sh full   # thêm mã nguồn/uploads + SSL
 ```
+Dump database dùng `--single-transaction` nên không lock site đang chạy.
+
+Restore — truyền file backup, loại được nhận diện theo tên, mỗi bước hỏi xác nhận, riêng restore db sẽ tự dump bản hiện tại ra `db-prerestore-*` trước khi ghi đè:
+```
+./restore.sh backups/db-2026-07-05_01-30-00.sql.gz
+./restore.sh backups/html-....tar.gz backups/config-....tar.gz
+```
+Sau restore db, script tự flush Redis object cache và purge page cache (bắt buộc, nếu không site sẽ đọc dữ liệu cũ từ cache). Lưu ý `WORDPRESS_TABLE_PREFIX` trong `.env` phải khớp prefix trong file dump.
+
+**Cảnh báo:** backup đang nằm cùng máy — nên đồng bộ thư mục `backups/` ra ngoài (rclone lên S3/B2/Drive hoặc rsync sang máy khác) để sống sót khi mất VM.
+
 # Thêm cron gia hạn SSL mỗi ngày vào 2h sáng
 Mặc định init.sh đã thêm cron gia hạn ssl tự động, nếu vì lý do gì đó bị mất  thì có thể thiết lập lại cron như sau:
 ```

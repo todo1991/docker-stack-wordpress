@@ -26,8 +26,8 @@ jobs:
 
       - name: Shellcheck scripts
         run: |
-          bash -n init.sh update.sh
-          docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable init.sh update.sh
+          bash -n init.sh update.sh backup.sh restore.sh
+          docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable init.sh update.sh backup.sh restore.sh
 
       - name: Hadolint Dockerfiles
         run: |

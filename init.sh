@@ -158,6 +158,14 @@ fi
 sed "s|__LOGDIR__|$SCRIPT_DIR/logs|" conf/logrotate/nginx-docker > /etc/logrotate.d/nginx-docker
 echo "Logrotate config installed to /etc/logrotate.d/nginx-docker."
 
+# backups: database+config daily at 01:30, full (files+certs) on Sunday 03:00
+if ! crontab -l 2>/dev/null | grep -qF "backup.sh"; then
+    (crontab -l 2>/dev/null
+     echo "30 1 * * * bash $SCRIPT_DIR/backup.sh >/dev/null 2>&1"
+     echo "0 3 * * 0 bash $SCRIPT_DIR/backup.sh full >/dev/null 2>&1") | crontab -
+    echo "Cron jobs added for daily and weekly backups."
+fi
+
 # WP cron runs from here instead of on page views (DISABLE_WP_CRON is set);
 # exec into the running container - no throwaway container every 5 minutes
 WPCRON_CMD="/usr/bin/docker exec -u www-data wordpress_instance wp cron event run --due-now"

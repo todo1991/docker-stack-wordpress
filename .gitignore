@@ -10,3 +10,6 @@ conf/nginx/conf.d/*.conf
 docker-compose.override.yml
 conf/mariadb/zz-*.cnf
 conf/nginx/conf.d/local/*.conf
+
+# local backups created by backup.sh
+backups/
