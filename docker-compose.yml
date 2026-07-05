@@ -1,10 +1,40 @@
 ---
+# ---- shared defaults -------------------------------------------------------
+
 # cap json-file logs so container stdout/stderr can't fill the disk
 x-logging: &default-logging
   driver: json-file
   options:
     max-size: "10m"
     max-file: "3"
+
+# applied to every service
+x-hardening: &hardening
+  logging: *default-logging
+  security_opt:
+    - no-new-privileges:true
+
+# DB settings shared by wordpress_instance and wpcli
+x-wordpress-env: &wordpress-env
+  WORDPRESS_DB_HOST: mariadb
+  WORDPRESS_DB_USER: ${MARIADB_USER}
+  WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
+  WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
+  WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wpstack_}
+
+x-db-depends: &db-depends
+  mariadb:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+
+# fast checks while starting (start_interval), relaxed once steady
+x-healthcheck-timing: &healthcheck-timing
+  interval: 30s
+  timeout: 5s
+  retries: 3
+  start_period: 30s
+  start_interval: 5s
 
 services:
 
@@ -15,20 +45,13 @@ services:
     restart: unless-stopped
     # give the DB time to flush on shutdown (default 10s risks a SIGKILL mid-write)
     stop_grace_period: 1m
-    security_opt:
-      - no-new-privileges:true
+    <<: *hardening
     env_file:
       - .env
-    logging: *default-logging
     healthcheck:
       # official healthcheck script shipped with the mariadb image
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    expose:
-      - 3306
+      <<: *healthcheck-timing
     volumes:
       - type: volume
         source: mariadb
@@ -46,11 +69,7 @@ services:
     image: redis:7-alpine
     container_name: redis
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    logging: *default-logging
-    expose:
-      - 6379
+    <<: *hardening
     command:
       - redis-server
       - --appendonly
@@ -66,9 +85,7 @@ services:
       - wordpressnetworkstack
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      <<: *healthcheck-timing
 
   nginx:
     build:
@@ -82,40 +99,48 @@ services:
     image: ghcr.io/todo1991/nginx_wordpress_alpine
     container_name: nginx
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    logging: *default-logging
+    <<: *hardening
     ports:
       - 80:80
       - 443:443
       # QUIC / HTTP-3
       - 443:443/udp
-    tmpfs:
-      - /run/nginx-cache
     volumes:
+      # page cache lives in RAM; capped a bit above fastcgi_cache_path
+      # max_size=1024m so the cache manager can trim before tmpfs fills
+      - type: tmpfs
+        target: /run/nginx-cache
+        tmpfs:
+          size: 1258291200
       - type: bind
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
+      # nginx only reads its config, certs and the docroot
       - type: bind
         source: ./conf/nginx/nginx.conf
         target: /etc/nginx/nginx.conf
+        read_only: true
       - type: bind
         source: ./conf/nginx/conf.d
         target: /etc/nginx/conf.d
+        read_only: true
       - type: bind
         source: ./logs
         target: /var/log/nginx
       - type: bind
         source: ./conf/nginx/modsec
         target: /etc/nginx/modsec
+        read_only: true
       - type: volume
         source: certbot-ssl
         target: /etc/letsencrypt
+        read_only: true
       # mount root document website fix 404, when use php-fpm (fastcgi_pass)
       - type: volume
         source: public_html
         target: /var/www/html
+        read_only: true
     depends_on:
       wordpress_instance:
         condition: service_healthy
@@ -129,9 +154,7 @@ services:
     healthcheck:
       # stub_status is exposed on port 80 for 127.0.0.1 only (see the site config)
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/nginx_status"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      <<: *healthcheck-timing
 
   wordpress_instance:
     build:
@@ -142,15 +165,9 @@ services:
     image: ghcr.io/todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    logging: *default-logging
+    <<: *hardening
     environment:
-      WORDPRESS_DB_HOST: mariadb
-      WORDPRESS_DB_USER: ${MARIADB_USER}
-      WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
-      WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
-      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wpstack_}
+      <<: *wordpress-env
       WORDPRESS_CONFIG_EXTRA: |
         # define('DISALLOW_FILE_EDIT', true);
         # enable if no plugin need edit file!
@@ -168,20 +185,13 @@ services:
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
-    depends_on:
-      mariadb:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+    depends_on: *db-depends
     networks:
       - wordpressnetworkstack
     healthcheck:
       # hit php-fpm's ping endpoint through FastCGI instead of just checking the process
       test: ["CMD-SHELL", "SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      <<: *healthcheck-timing
 
   # helper services: not started by `docker compose up -d`,
   # use `docker compose run --rm <service>` instead
@@ -190,7 +200,8 @@ services:
     container_name: certbot
     profiles:
       - tools
-    logging: *default-logging
+    init: true
+    <<: *hardening
     dns:
       - 8.8.8.8
     volumes:
@@ -208,13 +219,10 @@ services:
     container_name: wpcli
     profiles:
       - tools
-    logging: *default-logging
+    init: true
+    <<: *hardening
     environment:
-      WORDPRESS_DB_HOST: mariadb
-      WORDPRESS_DB_USER: ${MARIADB_USER}
-      WORDPRESS_DB_NAME: ${MARIADB_DATABASE}
-      WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD}
-      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wpstack_}
+      <<: *wordpress-env
       WORDPRESS_CONFIG_EXTRA: |
         define('WP_REDIS_HOST', 'redis');
         define('WP_REDIS_PORT', 6379);
@@ -224,11 +232,7 @@ services:
       - type: volume
         source: public_html
         target: /var/www/html
-    depends_on:
-      mariadb:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+    depends_on: *db-depends
     networks:
       - wordpressnetworkstack
 
