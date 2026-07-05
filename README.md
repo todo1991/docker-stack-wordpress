@@ -52,8 +52,10 @@ wpcli plugin install redis-cache --activate
 wpcli plugin install flying-fonts --activate
 wpcli plugin install flying-scripts --activate
 wpcli plugin install flying-pages --activate
-# NÊN cài nginx-helper: nginx đang cache trang 30 phút (fastcgi_cache_valid 30m),
-# plugin này sẽ purge cache tự động ngay khi nội dung website thay đổi.
+# Mặc định nginx dùng MICROCACHE 1 giây (fastcgi_cache_valid 1s) để các chức
+# năng động như đếm lượt truy cập vẫn hoạt động mà vẫn chịu được traffic dồn dập.
+# Nếu site KHÔNG đếm view, có thể tăng thời gian cache trong
+# conf/nginx/site.conf.template — khi đó nên cài nginx-helper để purge tự động:
 wpcli plugin install nginx-helper --activate
 ```
 

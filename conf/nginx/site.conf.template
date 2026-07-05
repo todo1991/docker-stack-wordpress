@@ -135,9 +135,13 @@ server {
 
 		# Restricts the number of concurrent attempts to populate the cache
 		fastcgi_cache_lock on;
-		# 30m works together with the purge module + nginx-helper plugin,
-		# which invalidate entries as soon as content changes
-		fastcgi_cache_valid 200 301 302 30m;
+		# MICROCACHE - 1s is intentional, do not raise it blindly: pages
+		# with view counters need PHP on (nearly) every request, and 1s
+		# still absorbs traffic bursts because concurrent requests share
+		# one render (cache_lock + use_stale updating + background_update).
+		# Raise it only if no page counts visits, and then install the
+		# nginx-helper plugin so content changes purge the cache.
+		fastcgi_cache_valid 200 301 302 1s;
 		fastcgi_cache_use_stale error timeout updating invalid_header http_500 http_503;
 		fastcgi_cache_background_update on;
 
