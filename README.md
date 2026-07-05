@@ -78,12 +78,12 @@ docker exec nginx find /run/nginx-cache -type f -delete
 Cache nằm trên tmpfs (RAM) nên restart container nginx (ví dụ sau mỗi lần `update.sh` recreate) cũng đồng nghĩa purge toàn bộ.
 
 # Backup & Restore
-Backup tự động đã được init.sh thêm vào cron: **01:30 hằng ngày** (database + config per-VM) và **03:00 Chủ nhật** (`full`: thêm mã nguồn/uploads + chứng chỉ SSL). File lưu tại `backups/` (gitignored), tự xoá bản cũ (mặc định giữ 7 ngày với db/config, 28 ngày với html/ssl — đổi qua biến `BACKUP_KEEP_DAYS`, `BACKUP_KEEP_DAYS_FULL`).
+Backup tự động đã được init.sh thêm vào cron: **01:30 hằng ngày** (database + config per-VM) và **03:00 Chủ nhật** (`full`: thêm mã nguồn/uploads). File lưu tại `backups/` (gitignored), tự xoá bản cũ (mặc định giữ 7 ngày với db/config, 28 ngày với html — đổi qua biến `BACKUP_KEEP_DAYS`, `BACKUP_KEEP_DAYS_FULL`).
 
 Chạy tay khi cần (ví dụ trước khi update lớn):
 ```
 ./backup.sh        # database + config
-./backup.sh full   # thêm mã nguồn/uploads + SSL
+./backup.sh full   # thêm mã nguồn/uploads
 ```
 Dump database dùng `--single-transaction` nên không lock site đang chạy.
 

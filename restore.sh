@@ -13,7 +13,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <backups/db-*.sql.gz | backups/html-*.tar.gz | backups/config-*.tar.gz | backups/ssl-*.tar.gz> ..."
+    echo "Usage: $0 <backups/db-*.sql.gz | backups/html-*.tar.gz | backups/config-*.tar.gz> ..."
     exit 1
 fi
 
@@ -78,15 +78,8 @@ for f in "$@"; do
             tar xzf "$f" -C "$SCRIPT_DIR"
             echo "    config restored - run 'docker compose up -d' to apply."
             ;;
-        ssl-*.tar.gz)
-            confirm "Overwrite Let's Encrypt certificates (certbot-ssl volume) with $base?" || continue
-            docker run --rm -v certbot-ssl:/data -v "$dir:/backup:ro" alpine \
-                sh -c "find /data -mindepth 1 -delete && tar xzf /backup/$base -C /data"
-            docker exec nginx nginx -s reload 2>/dev/null || true
-            echo "    certificates restored."
-            ;;
         *)
-            echo "ERROR: unrecognized backup file name: $base (expected db-/html-/config-/ssl- prefix)"
+            echo "ERROR: unrecognized backup file name: $base (expected db-/html-/config- prefix)"
             exit 1
             ;;
     esac

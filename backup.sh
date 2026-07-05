@@ -1,8 +1,8 @@
 #!/bin/bash
 # Local backups for this stack, written to ./backups (gitignored).
 #
-#   ./backup.sh        database + per-host config          (cron: daily)
-#   ./backup.sh full   + website files and LE certificates (cron: weekly)
+#   ./backup.sh        database + per-host config   (cron: daily)
+#   ./backup.sh full   + website files              (cron: weekly)
 #
 # Retention (days), override via environment:
 #   BACKUP_KEEP_DAYS=7 BACKUP_KEEP_DAYS_FULL=28 ./backup.sh
@@ -63,18 +63,11 @@ if [ "$MODE" = "full" ]; then
         tar czf "/backup/$(basename "$html_file")" -C /data .
     gzip -t "$html_file"
     echo "    $(du -h "$html_file" | cut -f1)  $html_file"
-
-    echo "==> Backing up Let's Encrypt certificates (certbot-ssl volume)"
-    ssl_file="$BACKUP_DIR/ssl-$STAMP.tar.gz"
-    docker run --rm -v certbot-ssl:/data:ro -v "$BACKUP_DIR:/backup" alpine \
-        tar czf "/backup/$(basename "$ssl_file")" -C /data .
-    echo "    $(du -h "$ssl_file" | cut -f1)  $ssl_file"
 fi
 
-echo "==> Pruning backups older than ${KEEP_DAYS}d (db/config) / ${KEEP_DAYS_FULL}d (html/ssl)"
+echo "==> Pruning backups older than ${KEEP_DAYS}d (db/config) / ${KEEP_DAYS_FULL}d (html)"
 find "$BACKUP_DIR" -name 'db-*.sql.gz' -mtime +"$KEEP_DAYS" -delete
 find "$BACKUP_DIR" -name 'config-*.tar.gz' -mtime +"$KEEP_DAYS" -delete
 find "$BACKUP_DIR" -name 'html-*.tar.gz' -mtime +"$KEEP_DAYS_FULL" -delete
-find "$BACKUP_DIR" -name 'ssl-*.tar.gz' -mtime +"$KEEP_DAYS_FULL" -delete
 
 echo "Backup complete."
