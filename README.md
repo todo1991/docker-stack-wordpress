@@ -66,14 +66,16 @@ wpcli option update rt_wp_nginx_helper_options '{"enable_purge":1,"cache_method"
 Bốn cách, từ tự động đến thủ công:
 1. **Tự động** — nginx-helper purge ngay khi có thay đổi nội dung (sửa/đăng/xoá bài, bình luận mới). Đã cấu hình ở phần cài plugin phía trên, không cần làm gì thêm.
 2. **Từ trang admin** — nginx-helper thêm nút **Purge Cache** trên thanh admin bar của WordPress (purge toàn bộ).
-3. **Purge 1 URL từ terminal** — endpoint `/purge/` chỉ mở cho mạng nội bộ nên gọi qua container:
+3. **Purge 1 URL từ terminal** — cú pháp `/purge/<đường-dẫn-trang>`, mỗi lần xoá đúng một URL (`/purge/` không có gì phía sau chỉ xoá cache trang chủ, KHÔNG phải xoá toàn bộ):
 ```
 docker exec wordpress_instance curl -sk "https://<domain>/purge/<duong-dan-trang>/"
 ```
+Lưu ý phải gọi **qua container** như trên. Endpoint `/purge/` chỉ cho phép IP nội bộ — curl thẳng từ host ra domain sẽ bị `403 Forbidden` vì hairpin NAT của Docker làm nginx thấy IP nguồn là IP public của host, bị coi như client ngoài internet (đây là chủ đích, để người ngoài không phá được cache).
 4. **Purge toàn bộ từ terminal** — xoá thẳng file cache trong tmpfs, hiệu lực tức thì, không cần reload nginx:
 ```
 docker exec nginx find /run/nginx-cache -type f -delete
 ```
+Cache nằm trên tmpfs (RAM) nên restart container nginx (ví dụ sau mỗi lần `update.sh` recreate) cũng đồng nghĩa purge toàn bộ.
 
 # Hướng dẫn backup database của webiste
 ```
