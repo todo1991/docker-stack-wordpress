@@ -8,6 +8,10 @@ on:
     # weekly build to catch upstream breakage (base images, pkg-oss, OWASP sources)
     - cron: "0 3 * * 1"
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -20,10 +24,10 @@ jobs:
       - name: Validate docker compose
         run: docker compose config --quiet
 
-      - name: Shellcheck init.sh
+      - name: Shellcheck scripts
         run: |
-          bash -n init.sh
-          docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable init.sh
+          bash -n init.sh update.sh
+          docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable init.sh update.sh
 
       - name: Hadolint Dockerfiles
         run: |
@@ -37,6 +41,14 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build wordpress (php-fpm) image
         uses: docker/build-push-action@v6
         with:
@@ -44,7 +56,9 @@ jobs:
           file: dockerfile/Dockerfile.wp
           build-args: |
             DOMAIN=example.com
-          tags: todo1991/phpfpm_wordpress_alpine
+          tags: |
+            ghcr.io/todo1991/phpfpm_wordpress_alpine:latest
+            ghcr.io/todo1991/phpfpm_wordpress_alpine:${{ github.sha }}
           load: true
           cache-from: type=gha,scope=wp
           cache-to: type=gha,scope=wp,mode=max
@@ -56,13 +70,17 @@ jobs:
           file: dockerfile/Dockerfile.alpine
           build-args: |
             ENABLED_MODULES=testcookie-nginx-module ngx_cache_purge brotli
-          tags: todo1991/nginx_wordpress_alpine
+          tags: |
+            ghcr.io/todo1991/nginx_wordpress_alpine:latest
+            ghcr.io/todo1991/nginx_wordpress_alpine:${{ github.sha }}
           load: true
           cache-from: type=gha,scope=nginx
           cache-to: type=gha,scope=nginx,mode=max
 
       - name: Prepare nginx config test fixtures
         run: |
+          # render the site config exactly like init.sh/update.sh do
+          sed "s/example.com/example.com/g" conf/nginx/site.conf.template > conf/nginx/conf.d/example.com.conf
           # coreruleset is normally cloned by init.sh
           git clone --depth 1 https://github.com/coreruleset/coreruleset.git conf/nginx/modsec/coreruleset
           cp conf/nginx/modsec/coreruleset/crs-setup.conf.example conf/nginx/modsec/coreruleset/crs-setup.conf
@@ -82,4 +100,13 @@ jobs:
             -v "$PWD/conf/nginx/conf.d:/etc/nginx/conf.d:ro" \
             -v "$PWD/conf/nginx/modsec:/etc/nginx/modsec:ro" \
             -v "$PWD/ssl-test:/etc/letsencrypt:ro" \
-            todo1991/nginx_wordpress_alpine nginx -t
+            ghcr.io/todo1991/nginx_wordpress_alpine:latest nginx -t
+
+      # only publish images that passed the config test, and only from main
+      - name: Push images to GHCR
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          docker push ghcr.io/todo1991/phpfpm_wordpress_alpine:latest
+          docker push ghcr.io/todo1991/phpfpm_wordpress_alpine:${{ github.sha }}
+          docker push ghcr.io/todo1991/nginx_wordpress_alpine:latest
+          docker push ghcr.io/todo1991/nginx_wordpress_alpine:${{ github.sha }}
