@@ -6,11 +6,60 @@ on:
   pull_request:
 
 jobs:
-  tests:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Create .env from example
+        run: cp .env.example .env
+
       - name: Validate docker compose
-        run: docker compose config
-      - name: Lint init.sh
-        run: bash -n init.sh
+        run: docker compose config --quiet
+
+      - name: Shellcheck init.sh
+        run: |
+          bash -n init.sh
+          docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable init.sh
+
+      - name: Hadolint Dockerfiles
+        run: |
+          docker run --rm -i hadolint/hadolint hadolint --failure-threshold error - < dockerfile/Dockerfile.alpine
+          docker run --rm -i hadolint/hadolint hadolint --failure-threshold error - < dockerfile/Dockerfile.wp
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env from example
+        run: cp .env.example .env
+
+      - name: Build wordpress (php-fpm) image
+        run: docker compose build wordpress_instance
+
+      - name: Build nginx image (with modules)
+        run: docker compose build nginx
+
+      - name: Prepare nginx config test fixtures
+        run: |
+          # coreruleset is normally cloned by init.sh
+          git clone --depth 1 https://github.com/coreruleset/coreruleset.git conf/nginx/modsec/coreruleset
+          cp conf/nginx/modsec/coreruleset/crs-setup.conf.example conf/nginx/modsec/coreruleset/crs-setup.conf
+          cp conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example conf/nginx/modsec/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+          # self-signed cert standing in for the Let's Encrypt one
+          mkdir -p ssl-test/live/example.com
+          openssl req -x509 -nodes -newkey rsa:2048 -days 1 -subj "/CN=example.com" \
+            -keyout ssl-test/live/example.com/privkey.pem \
+            -out ssl-test/live/example.com/fullchain.pem
+          cp ssl-test/live/example.com/fullchain.pem ssl-test/live/example.com/chain.pem
+
+      - name: Test nginx configuration (nginx -t)
+        run: |
+          # --add-host satisfies the config-time DNS lookup of the php-fpm upstream
+          docker run --rm --add-host wordpress_instance:127.0.0.1 \
+            -v "$PWD/conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro" \
+            -v "$PWD/conf/nginx/conf.d:/etc/nginx/conf.d:ro" \
+            -v "$PWD/conf/nginx/modsec:/etc/nginx/modsec:ro" \
+            -v "$PWD/ssl-test:/etc/letsencrypt:ro" \
+            todo1991/nginx_wordpress_alpine nginx -t
