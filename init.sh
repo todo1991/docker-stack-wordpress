@@ -102,7 +102,6 @@ MARIADB_USER=$MARIADB_USER
 MARIADB_PASSWORD=$MARIADB_PASSWORD
 DOMAIN=$DOMAIN
 EMAIL=$EMAIL
-IPHOST=$main_ip
 WORDPRESS_TABLE_PREFIX=wpstack_
 EOF
 
@@ -159,6 +158,13 @@ fi
 # rotate nginx logs in ./logs so they don't grow unbounded
 sed "s|__LOGDIR__|$SCRIPT_DIR/logs|" conf/logrotate/nginx-docker > /etc/logrotate.d/nginx-docker
 echo "Logrotate config installed to /etc/logrotate.d/nginx-docker."
+
+# WP cron runs from here instead of on page views (DISABLE_WP_CRON is set)
+WPCRON_CMD="cd $SCRIPT_DIR && /usr/bin/docker compose run --rm --no-deps --quiet-pull wpcli cron event run --due-now"
+if ! crontab -l 2>/dev/null | grep -qF "cron event run"; then
+    (crontab -l 2>/dev/null; echo "*/5 * * * * $WPCRON_CMD >/dev/null 2>&1") | crontab -
+    echo "Cron job added to run WordPress cron every 5 minutes."
+fi
 
 # wp-cli alias (only once)
 if ! grep -qs 'alias wpcli=' ~/.bash_aliases; then

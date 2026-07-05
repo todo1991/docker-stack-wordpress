@@ -1,4 +1,7 @@
 ARG NGINX_FROM_IMAGE=nginx:mainline-alpine
+# slim variant for the final image: same nginx build, without the bundled
+# njs/xslt/geoip/image-filter modules this stack never loads
+ARG NGINX_FINAL_IMAGE=nginx:mainline-alpine-slim
 FROM ${NGINX_FROM_IMAGE} AS builder
 
 ARG ENABLED_MODULES
@@ -89,7 +92,7 @@ RUN set -ex \
     && make modules \
     && cp objs/ngx_http_modsecurity_module.so /ngx_http_modsecurity_module.so
 
-FROM ${NGINX_FROM_IMAGE}
+FROM ${NGINX_FINAL_IMAGE}
 COPY --from=builder /tmp/packages /tmp/packages
 COPY --from=modsec-builder /usr/local/modsecurity/lib/libmodsecurity.so.* /usr/lib/
 COPY --from=modsec-builder /ngx_http_modsecurity_module.so /usr/lib/nginx/modules/ngx_http_modsecurity_module.so

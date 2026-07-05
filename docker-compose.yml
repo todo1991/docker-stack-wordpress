@@ -13,6 +13,10 @@ services:
     image: mariadb:10.11
     container_name: mariadb
     restart: unless-stopped
+    # give the DB time to flush on shutdown (default 10s risks a SIGKILL mid-write)
+    stop_grace_period: 1m
+    security_opt:
+      - no-new-privileges:true
     env_file:
       - .env
     logging: *default-logging
@@ -40,6 +44,8 @@ services:
     image: redis:7-alpine
     container_name: redis
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     logging: *default-logging
     expose:
       - 6379
@@ -47,6 +53,9 @@ services:
       - redis-server
       - --appendonly
       - "no"
+      # pure cache: disable RDB snapshots too, no persistence needed
+      - --save
+      - ""
       - --maxmemory
       - 256mb
       - --maxmemory-policy
@@ -70,6 +79,8 @@ services:
     image: todo1991/nginx_wordpress_alpine
     container_name: nginx
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     logging: *default-logging
     ports:
       - 80:80
@@ -106,7 +117,12 @@ services:
       wordpress_instance:
         condition: service_healthy
     networks:
-      - wordpressnetworkstack
+      wordpressnetworkstack:
+        # containers resolve the site domain straight to nginx, so WordPress
+        # loopback requests (REST API / Site Health) work without extra_hosts
+        aliases:
+          - ${DOMAIN}
+          - www.${DOMAIN}
     healthcheck:
       # stub_status is exposed on port 80 for 127.0.0.1 only (see the site config)
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/nginx_status"]
@@ -123,6 +139,8 @@ services:
     image: todo1991/phpfpm_wordpress_alpine
     container_name: wordpress_instance
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     logging: *default-logging
     environment:
       WORDPRESS_DB_HOST: mariadb
@@ -137,9 +155,8 @@ services:
         define('WP_REDIS_PORT', 6379);
         define('WP_MEMORY_LIMIT', '256M');
         define('WP_MAX_MEMORY_LIMIT', '512M');
-    # fix REST-API on Site Health Check wordpress
-    extra_hosts:
-      - ${DOMAIN}:${IPHOST}
+        # cron runs from the host via wp-cli (see init.sh), not on page views
+        define('DISABLE_WP_CRON', true);
     volumes:
       - type: volume
         source: public_html
