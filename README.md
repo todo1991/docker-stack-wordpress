@@ -36,7 +36,6 @@ Lưu ý: hai service tiện ích `certbot` và `wpcli` nằm trong profile `tool
 - `MARIADB_PASSWORD`: mật khẩu của `MARIADB_USER`.
 - `DOMAIN`: tên miền website dùng để cấu hình nginx và SSL.
 - `EMAIL`: địa chỉ email đăng ký chứng chỉ Let's Encrypt.
-- `IPHOST`: địa chỉ IP của máy chạy Docker.
 - `WORDPRESS_TABLE_PREFIX`: tiền tố bảng của WordPress (mặc định `wpstack_`). **Quan trọng khi import site có sẵn**: phải đặt đúng tiền tố của database cũ (thường là `wp_`), nếu không WordPress sẽ không thấy bảng và hiện màn hình cài đặt mới.
 
 ---
@@ -53,7 +52,8 @@ wpcli plugin install redis-cache --activate
 wpcli plugin install flying-fonts --activate
 wpcli plugin install flying-scripts --activate
 wpcli plugin install flying-pages --activate
-# Không cần cài plugin bên dưới, nguyên nhân là do nginx đang cấu hình fastcgi_cache_valid 1s, nếu cần thết lập lưu cache lâu hơn thì có thể  cài thêm plugin này để update cache tự động khi có thay đổi  nội dung  website.
+# NÊN cài nginx-helper: nginx đang cache trang 30 phút (fastcgi_cache_valid 30m),
+# plugin này sẽ purge cache tự động ngay khi nội dung website thay đổi.
 wpcli plugin install nginx-helper --activate
 ```
 
