@@ -58,16 +58,16 @@ echo "    $(du -h "$config_file" | cut -f1)  $config_file"
 
 if [ "$MODE" = "full" ]; then
     echo "==> Backing up website files (public_html volume)"
-    html_file="$BACKUP_DIR/html-$STAMP.tar.gz"
+    sourcecode_file="$BACKUP_DIR/sourcecode-$STAMP.tar.gz"
     docker run --rm -v public_html:/data:ro -v "$BACKUP_DIR:/backup" alpine \
-        tar czf "/backup/$(basename "$html_file")" -C /data .
-    gzip -t "$html_file"
-    echo "    $(du -h "$html_file" | cut -f1)  $html_file"
+        tar czf "/backup/$(basename "$sourcecode_file")" -C /data .
+    gzip -t "$sourcecode_file"
+    echo "    $(du -h "$sourcecode_file" | cut -f1)  $sourcecode_file"
 fi
 
-echo "==> Pruning backups older than ${KEEP_DAYS}d (db/config) / ${KEEP_DAYS_FULL}d (html)"
+echo "==> Pruning backups older than ${KEEP_DAYS}d (db/config) / ${KEEP_DAYS_FULL}d (sourcecode)"
 find "$BACKUP_DIR" -name 'db-*.sql.gz' -mtime +"$KEEP_DAYS" -delete
 find "$BACKUP_DIR" -name 'config-*.tar.gz' -mtime +"$KEEP_DAYS" -delete
-find "$BACKUP_DIR" -name 'html-*.tar.gz' -mtime +"$KEEP_DAYS_FULL" -delete
+find "$BACKUP_DIR" -name 'sourcecode-*.tar.gz' -mtime +"$KEEP_DAYS_FULL" -delete
 
 echo "Backup complete."

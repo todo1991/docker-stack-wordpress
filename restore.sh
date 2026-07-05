@@ -13,7 +13,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"
 
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <backups/db-*.sql.gz | backups/html-*.tar.gz | backups/config-*.tar.gz> ..."
+    echo "Usage: $0 <backups/db-*.sql.gz | backups/sourcecode-*.tar.gz | backups/config-*.tar.gz> ..."
     exit 1
 fi
 
@@ -65,7 +65,7 @@ for f in "$@"; do
             echo "    database restored."
             echo "    NOTE: WORDPRESS_TABLE_PREFIX in .env must match the prefix inside the dump."
             ;;
-        html-*.tar.gz)
+        sourcecode-*.tar.gz|html-*.tar.gz)
             confirm "WIPE and overwrite ALL website files (public_html volume) with $base?" || continue
             echo "==> Restoring website files"
             docker run --rm -v public_html:/data -v "$dir:/backup:ro" alpine \
@@ -90,7 +90,7 @@ for f in "$@"; do
             echo "    config restored - run 'docker compose up -d' to apply."
             ;;
         *)
-            echo "ERROR: unrecognized backup file name: $base (expected db-/html-/config- prefix)"
+            echo "ERROR: unrecognized backup file name: $base (expected db-/sourcecode-/config- prefix)"
             exit 1
             ;;
     esac

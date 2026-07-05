@@ -78,7 +78,7 @@ docker exec nginx find /run/nginx-cache -type f -delete
 Cache nằm trên tmpfs (RAM) nên restart container nginx (ví dụ sau mỗi lần `update.sh` recreate) cũng đồng nghĩa purge toàn bộ.
 
 # Backup & Restore
-Backup tự động đã được init.sh thêm vào cron: **01:30 hằng ngày** (database + config per-VM) và **03:00 Chủ nhật** (`full`: thêm mã nguồn/uploads). File lưu tại `backups/` (gitignored), tự xoá bản cũ (mặc định giữ 7 ngày với db/config, 28 ngày với html — đổi qua biến `BACKUP_KEEP_DAYS`, `BACKUP_KEEP_DAYS_FULL`).
+Backup tự động đã được init.sh thêm vào cron: **01:30 hằng ngày** (database + config per-VM) và **03:00 Chủ nhật** (`full`: thêm mã nguồn/uploads). File lưu tại `backups/` (gitignored), tự xoá bản cũ (mặc định giữ 7 ngày với db/config, 28 ngày với sourcecode — đổi qua biến `BACKUP_KEEP_DAYS`, `BACKUP_KEEP_DAYS_FULL`).
 
 Chạy tay khi cần (ví dụ trước khi update lớn):
 ```
@@ -90,7 +90,7 @@ Dump database dùng `--single-transaction` nên không lock site đang chạy.
 Restore — truyền file backup, loại được nhận diện theo tên, mỗi bước hỏi xác nhận, riêng restore db sẽ tự dump bản hiện tại ra `db-prerestore-*` trước khi ghi đè:
 ```
 ./restore.sh backups/db-2026-07-05_01-30-00.sql.gz
-./restore.sh backups/html-....tar.gz backups/config-....tar.gz
+./restore.sh backups/sourcecode-....tar.gz backups/config-....tar.gz
 ```
 Sau restore db, script tự flush Redis object cache và purge page cache (bắt buộc, nếu không site sẽ đọc dữ liệu cũ từ cache). Lưu ý `WORDPRESS_TABLE_PREFIX` trong `.env` phải khớp prefix trong file dump.
 
@@ -151,11 +151,11 @@ rm -f your_code/wp-config.php
 
 mkdir -p backups
 gzip -c database.sql > backups/db-migrate.sql.gz
-tar czf backups/html-migrate.tar.gz -C ./your_code .
+tar czf backups/sourcecode-migrate.tar.gz -C ./your_code .
 
 # restore cả hai (db cần mariadb đang chạy)
 docker compose up -d mariadb
-./restore.sh backups/db-migrate.sql.gz backups/html-migrate.tar.gz
+./restore.sh backups/db-migrate.sql.gz backups/sourcecode-migrate.tar.gz
 
 # khởi động toàn bộ và kiểm tra
 docker compose up -d
